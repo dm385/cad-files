@@ -1,0 +1,107 @@
+{
+  "ident": "As1Asm_Template",
+  "instances": [
+    {
+      "ident": "Plate_Instance",
+      "template": "Plate_Template"
+    },
+    {
+      "ident": "LBracketAsm_Instance",
+      "template": "LBracketAsm_Template"
+    },
+    {
+      "ident": "LBracketAsm_Instance0",
+      "template": "LBracketAsm_Template"
+    },
+    {
+      "ident": "RodAsm_Instance",
+      "template": "RodAsm_Template"
+    }
+  ],
+  "templates": [
+    {
+      "ident": "Plate_Template",
+      "type": "part",
+      "URL": "https://raw.githubusercontent.com/dm385/cad-files/main/json-assembly/Plate.ofb"
+    },
+    {
+      "ident": "LBracketAsm_Template",
+      "type": "assembly",
+      "URL": "https://raw.githubusercontent.com/dm385/cad-files/main/json-assembly/LBracketREFAssembly.json"
+    },
+
+    {
+      "ident": "RodAsm_Template",
+      "type": "assembly",
+      "URL": "https://raw.githubusercontent.com/dm385/cad-files/main/json-assembly/RodREFAssembly.json"
+    }
+  ],
+  "constraints": [
+    {
+      "type": "CC_FastenedOriginConstraint",
+      "mate1": {
+        "path": ["/As1Asm_Template/Plate_Instance"],
+        "csys": "WCS_Origin",
+        "flip": 4,
+        "reorient": 0
+      }
+    },
+    {
+      "type": "CC_FastenedConstraint",
+      "mate1": {
+        "path": ["/As1Asm_Template/Plate_Instance"],
+        "csys": "WCS_Hole2_Top",
+        "flip": 4,
+        "reorient": 0
+      },
+      "mate2": {
+        "path": [
+          "/LBracketAsm_Template/LBracket_Instance",
+          "/As1Asm_Template/LBracketAsm_Instance"
+        ],
+        "csys": "WCS_Hole1-Bottom",
+        "flip": 4,
+        "reorient": 0
+      }
+    },
+    {
+      "type": "CC_FastenedConstraint",
+      "mate1": {
+        "path": ["/As1Asm_Template/Plate_Instance"],
+        "csys": "WCS_Hole5_Top",
+        "flip": 4,
+        "reorient": 0
+      },
+      "mate2": {
+        "path": [
+          "/LBracketAsm_Template/LBracket_Instance",
+          "/As1Asm_Template/LBracketAsm_Instance0"
+        ],
+        "csys": "WCS_Hole1-Bottom",
+        "flip": 4,
+        "reorient": 0
+      }
+    },
+    {
+      "type": "CC_FastenedConstraint",
+      "mate1": {
+        "path": [
+          "/LBracketAsm_Template/LBracket_Instance",
+          "/As1Asm_Template/LBracketAsm_Instance"
+        ],
+        "csys": "WCS_Rod",
+        "flip": 4,
+        "reorient": 0
+      },
+      "mate2": {
+        "path": [
+          "/RodAsm_Template/Rod_Instance",
+          "/As1Asm_Template/RodAsm_Instance"
+        ],
+        "csys": "WCS_Nut-Left",
+        "flip": 4,
+        "reorient": 0
+      }
+    }
+  ]
+}

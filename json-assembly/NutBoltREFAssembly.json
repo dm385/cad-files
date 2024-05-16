@@ -1,0 +1,51 @@
+{
+  "ident": "NutBoltAsm_Template",
+  "instances": [
+    {
+      "ident": "Bolt_Instance",
+      "template": "Bolt_Template"
+    },
+    {
+      "ident": "Nut_Instance",
+      "template": "Nut_Template"
+    }
+  ],
+  "templates": [
+    {
+      "ident": "Bolt_Template",
+      "type": "part",
+      "URL": "https://raw.githubusercontent.com/dm385/cad-files/main/json-assembly/Bolt.ofb"
+    },
+    {
+      "ident": "Nut_Template",
+      "type": "part",
+      "URL": "https://raw.githubusercontent.com/dm385/cad-files/main/json-assembly/Nut.ofb"
+    }
+  ],
+  "constraints": [
+    {
+      "type": "CC_FastenedOriginConstraint",
+      "mate1": {
+        "path": ["/NutBoltAsm_Template/Bolt_Instance"],
+        "csys": "WCS_Origin",
+        "flip": 4,
+        "reorient": 0
+      }
+    },
+    {
+      "type": "CC_FastenedConstraint",
+      "mate1": {
+        "path": ["/NutBoltAsm_Template/Bolt_Instance"],
+        "csys": "WCS_Nut",
+        "flip": 4,
+        "reorient": 0
+      },
+      "mate2": {
+        "path": ["/NutBoltAsm_Template/Nut_Instance"],
+        "csys": "WCS_Hole-Top",
+        "flip": 4,
+        "reorient": 0
+      }
+    }
+  ]
+}

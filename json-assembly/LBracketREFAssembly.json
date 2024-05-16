@@ -1,0 +1,89 @@
+{
+  "ident": "LBracketAsm_Template",
+  "instances": [
+    {
+      "ident": "LBracket_Instance",
+      "template": "LBracket_Template"
+    },
+    {
+      "ident": "NutBoltAsm_Instance",
+      "template": "NutBoltAsm_Template"
+    },
+    {
+      "ident": "NutBoltAsm_Instance0",
+      "template": "NutBoltAsm_Template"
+    },
+    {
+      "ident": "NutBoltAsm_Instance1",
+      "template": "NutBoltAsm_Template"
+    }
+  ],
+  "templates": [
+    {
+      "ident": "LBracket_Template",
+      "type": "part",
+      "URL": "https://raw.githubusercontent.com/dm385/cad-files/main/json-assembly/LBracket.ofb"
+    },
+    {
+      "ident": "NutBoltAsm_Template",
+      "type": "assembly",
+      "URL": "https://raw.githubusercontent.com/dm385/cad-files/main/json-assembly/NutBoltREFAssembly.json"
+    }
+  ],
+  "constraints": [
+    {
+      "type": "CC_FastenedOriginConstraint",
+      "mate1": {
+        "path": ["/LBracketAsm_Template/LBracket_Instance"],
+        "csys": "WCS_Origin",
+        "flip": 4,
+        "reorient": 0
+      }
+    },
+    {
+      "type": "CC_FastenedConstraint",
+      "mate1": {
+        "path": ["/LBracketAsm_Template/LBracket_Instance"],
+        "csys": "WCS_Hole2-Top",
+        "flip": 4,
+        "reorient": 0
+      },
+      "mate2": {
+        "path": ["/NutBoltAsm_Template/Bolt_Instance", "/LBracketAsm_Template/NutBoltAsm_Instance"],
+        "csys": "WCS_Head-Shaft",
+        "flip": 4,
+        "reorient": 0
+      }
+    },
+    {
+      "type": "CC_FastenedConstraint",
+      "mate1": {
+        "path": ["/LBracketAsm_Template/LBracket_Instance"],
+        "csys": "WCS_Hole1-Top",
+        "flip": 4,
+        "reorient": 0
+      },
+      "mate2": {
+        "path": ["/NutBoltAsm_Template/Bolt_Instance", "/LBracketAsm_Template/NutBoltAsm_Instance0"],
+        "csys": "WCS_Head-Shaft",
+        "flip": 4,
+        "reorient": 0
+      }
+    },
+    {
+      "type": "CC_FastenedConstraint",
+      "mate1": {
+        "path": ["/LBracketAsm_Template/LBracket_Instance"],
+        "csys": "WCS_Hole3-Top",
+        "flip": 4,
+        "reorient": 0
+      },
+      "mate2": {
+        "path": ["/NutBoltAsm_Template/Bolt_Instance", "/LBracketAsm_Template/NutBoltAsm_Instance1"],
+        "csys": "WCS_Head-Shaft",
+        "flip": 4,
+        "reorient": 0
+      }
+    }
+  ]
+}
