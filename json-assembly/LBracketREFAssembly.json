@@ -22,12 +22,12 @@
     {
       "ident": "LBracket_Template",
       "type": "part",
-      "URL": "https://raw.githubusercontent.com/dm385/cad-files/main/json-assembly/LBracket.ofb"
+      "url": "https://raw.githubusercontent.com/dm385/cad-files/main/json-assembly/LBracket.ofb"
     },
     {
       "ident": "NutBoltAsm_Template",
       "type": "assembly",
-      "URL": "https://raw.githubusercontent.com/dm385/cad-files/main/json-assembly/NutBoltREFAssembly.json"
+      "url": "https://raw.githubusercontent.com/dm385/cad-files/main/json-assembly/NutBoltREFAssembly.json"
     }
   ],
   "constraints": [
