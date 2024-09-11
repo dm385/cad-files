@@ -19,11 +19,13 @@
     },
     {
       "ident": "Profile_ofb",
-      "template": "Profile_OFB"
+      "template": "Profile_OFB",
+      "transform": "[[1,0,0,0],[0,1,0,-100],[0,0,1,0],[0,0,0,1]]"
     },
     {
       "ident": "Profile_stp",
-      "template": "Profile_STP"
+      "template": "Profile_STP",
+      "transform": "[[1,0,0,0],[0,1,0,100],[0,0,1,0],[0,0,0,1]]"
     }
   ],
   "templates": [
