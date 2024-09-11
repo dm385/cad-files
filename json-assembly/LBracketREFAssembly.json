@@ -22,12 +22,18 @@
     {
       "ident": "LBracket_Template",
       "type": "part",
-      "url": "https://raw.githubusercontent.com/dm385/cad-files/main/json-assembly/LBracket.ofb"
+      "reference": {
+        "location": "https://raw.githubusercontent.com/dm385/cad-files/main/json-assembly/LBracket.ofb",
+        "type": "ofb"
+      }
     },
     {
       "ident": "NutBoltAsm_Template",
       "type": "assembly",
-      "url": "https://raw.githubusercontent.com/dm385/cad-files/main/json-assembly/NutBoltREFAssembly.json"
+      "reference": {
+        "location": "https://raw.githubusercontent.com/dm385/cad-files/main/json-assembly/NutBoltREFAssembly.json",
+        "type": "json"
+      }
     }
   ],
   "constraints": [
@@ -49,7 +55,10 @@
         "reorient": 0
       },
       "mate2": {
-        "path": ["/NutBoltAsm_Template/Bolt_Instance", "/LBracketAsm_Template/NutBoltAsm_Instance"],
+        "path": [
+          "/NutBoltAsm_Template/Bolt_Instance",
+          "/LBracketAsm_Template/NutBoltAsm_Instance"
+        ],
         "csys": "WCS_Head-Shaft",
         "flip": 4,
         "reorient": 0
@@ -64,7 +73,10 @@
         "reorient": 0
       },
       "mate2": {
-        "path": ["/NutBoltAsm_Template/Bolt_Instance", "/LBracketAsm_Template/NutBoltAsm_Instance0"],
+        "path": [
+          "/NutBoltAsm_Template/Bolt_Instance",
+          "/LBracketAsm_Template/NutBoltAsm_Instance0"
+        ],
         "csys": "WCS_Head-Shaft",
         "flip": 4,
         "reorient": 0
@@ -79,7 +91,10 @@
         "reorient": 0
       },
       "mate2": {
-        "path": ["/NutBoltAsm_Template/Bolt_Instance", "/LBracketAsm_Template/NutBoltAsm_Instance1"],
+        "path": [
+          "/NutBoltAsm_Template/Bolt_Instance",
+          "/LBracketAsm_Template/NutBoltAsm_Instance1"
+        ],
         "csys": "WCS_Head-Shaft",
         "flip": 4,
         "reorient": 0

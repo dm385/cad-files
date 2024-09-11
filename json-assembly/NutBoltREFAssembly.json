@@ -14,12 +14,18 @@
     {
       "ident": "Bolt_Template",
       "type": "part",
-      "url": "https://raw.githubusercontent.com/dm385/cad-files/main/json-assembly/Bolt.ofb"
+      "reference": {
+        "location": "https://raw.githubusercontent.com/dm385/cad-files/main/json-assembly/Bolt.ofb",
+        "type": "ofb"
+      }
     },
     {
       "ident": "Nut_Template",
       "type": "part",
-      "url": "https://raw.githubusercontent.com/dm385/cad-files/main/json-assembly/Nut.ofb"
+      "reference": {
+        "location": "https://raw.githubusercontent.com/dm385/cad-files/main/json-assembly/Nut.ofb",
+        "type": "ofb"
+      }
     }
   ],
   "constraints": [

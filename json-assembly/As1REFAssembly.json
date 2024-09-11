@@ -22,18 +22,27 @@
     {
       "ident": "Plate_Template",
       "type": "part",
-      "url": "https://raw.githubusercontent.com/dm385/cad-files/main/json-assembly/Plate.ofb"
+      "reference": {
+        "location": "https://raw.githubusercontent.com/dm385/cad-files/main/json-assembly/Plate.ofb",
+        "type": "ofb"
+      }
     },
     {
       "ident": "LBracketAsm_Template",
       "type": "assembly",
-      "url": "https://raw.githubusercontent.com/dm385/cad-files/main/json-assembly/LBracketREFAssembly.json"
+      "reference": {
+        "location": "https://raw.githubusercontent.com/dm385/cad-files/main/json-assembly/LBracketREFAssembly.json",
+        "type": "json"
+      }
     },
 
     {
       "ident": "RodAsm_Template",
       "type": "assembly",
-      "url": "https://raw.githubusercontent.com/dm385/cad-files/main/json-assembly/RodREFAssembly.json"
+      "reference": {
+        "location": "https://raw.githubusercontent.com/dm385/cad-files/main/json-assembly/RodREFAssembly.json",
+        "type": "json"
+      }
     }
   ],
   "constraints": [

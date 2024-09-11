@@ -1,75 +1,79 @@
 {
-    "ident": "RodAsm_Template",
-    "instances": [
-      {
-        "ident": "Rod_Instance",
-        "template": "Rod_Template"
-      },
-      {
-        "ident": "Nut_Instance",
-        "template": "Nut_Template"
-      },
-      {
-        "ident": "Nut_Instance0",
-        "template": "Nut_Template"
+  "ident": "RodAsm_Template",
+  "instances": [
+    {
+      "ident": "Rod_Instance",
+      "template": "Rod_Template"
+    },
+    {
+      "ident": "Nut_Instance",
+      "template": "Nut_Template"
+    },
+    {
+      "ident": "Nut_Instance0",
+      "template": "Nut_Template"
+    }
+  ],
+  "templates": [
+    {
+      "ident": "Rod_Template",
+      "type": "part",
+      "reference": {
+        "location": "https://raw.githubusercontent.com/dm385/cad-files/main/json-assembly/Rod.ofb",
+        "type": "ofb"
       }
-    ],
-    "templates": [
-      {
-        "ident": "Rod_Template",
-        "type": "part",
-        "url": "https://raw.githubusercontent.com/dm385/cad-files/main/json-assembly/Rod.ofb"
-  
-      },
-      {
-        "ident": "Nut_Template",
-        "type": "part",
-        "url": "https://raw.githubusercontent.com/dm385/cad-files/main/json-assembly/Nut.ofb"
-  
+    },
+    {
+      "ident": "Nut_Template",
+      "type": "part",
+      "reference": {
+        "location": "https://raw.githubusercontent.com/dm385/cad-files/main/json-assembly/Nut.ofb",
+        "type": "ofb"
       }
-    ],
-    "constraints": [
-      {
-        "type": "CC_FastenedOriginConstraint",
-       
-        "mate1": {
-          "path": ["/RodAsm_Template/Rod_Instance"],
-          "csys": "WCS_Origin",
-          "flip": 4,
-          "reorient": 0
-        }
-      },
-      {
-        "type": "CC_FastenedConstraint",
-      
-        "mate1": {
-          "path": ["/RodAsm_Template/Rod_Instance"],
-          "csys": "WCS_Nut-Left",
-          "flip": 4,
-          "reorient": 0
-        },
-        "mate2": {
-          "path": ["/RodAsm_Template/Nut_Instance"],
-          "csys": "WCS_Hole-Top",
-          "flip": 4,
-          "reorient": 0
-        }
-      },
-      {
-        "type": "CC_FastenedConstraint",
-      
-        "mate1": {
-          "path": ["/RodAsm_Template/Rod_Instance"],
-          "csys": "WCS_Nut-Right",
-          "flip": 4,
-          "reorient": 0
-        },
-        "mate2": {
-          "path": ["/RodAsm_Template/Nut_Instance0"],
-          "csys": "WCS_Hole-Top",
-          "flip": 4,
-          "reorient": 0
-        }
+    }
+  ],
+  "constraints": [
+    {
+      "type": "CC_FastenedOriginConstraint",
+
+      "mate1": {
+        "path": ["/RodAsm_Template/Rod_Instance"],
+        "csys": "WCS_Origin",
+        "flip": 4,
+        "reorient": 0
       }
-    ]
-  }
+    },
+    {
+      "type": "CC_FastenedConstraint",
+
+      "mate1": {
+        "path": ["/RodAsm_Template/Rod_Instance"],
+        "csys": "WCS_Nut-Left",
+        "flip": 4,
+        "reorient": 0
+      },
+      "mate2": {
+        "path": ["/RodAsm_Template/Nut_Instance"],
+        "csys": "WCS_Hole-Top",
+        "flip": 4,
+        "reorient": 0
+      }
+    },
+    {
+      "type": "CC_FastenedConstraint",
+
+      "mate1": {
+        "path": ["/RodAsm_Template/Rod_Instance"],
+        "csys": "WCS_Nut-Right",
+        "flip": 4,
+        "reorient": 0
+      },
+      "mate2": {
+        "path": ["/RodAsm_Template/Nut_Instance0"],
+        "csys": "WCS_Hole-Top",
+        "flip": 4,
+        "reorient": 0
+      }
+    }
+  ]
+}
