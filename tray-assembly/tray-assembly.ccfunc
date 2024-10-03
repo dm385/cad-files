@@ -1,0 +1,148 @@
+VAR rootId, trayPrt, hipAsm, meshAsm, hipPrt, hipCPrt, deckingPrt, flashingPrt, meshPrt, meshCPrt,
+		currHipInstances, currMeshInstances, trayWidth, xDir, yDir,
+		HIP_MODULE_SIZE, BEAM_WEB_THICKNESS, MESH_OFFSET, MESH_SECTION_WIDTH, MESH_SPACING;
+
+// Update tray width of all parts (expressions)
+PROC UpdateTrayWidth
+	PAR lTrayWidth;
+	VAR nofHips, leftoverHip, nofMeshes, leftoverMesh, expressions;
+	nofHips = div((lTrayWidth - BEAM_WEB_THICKNESS), HIP_MODULE_SIZE);
+	leftoverHip = (lTrayWidth - BEAM_WEB_THICKNESS) - (nofHips * HIP_MODULE_SIZE);
+	IF ((lTrayWidth + 2 * MESH_OFFSET) > MESH_SECTION_WIDTH) THEN
+		nofMeshes = 2;
+	ELSE
+		nofMeshes = 1;
+	ENDIF
+	IF (nofMeshes > 1) THEN	// whole mesh plus cutted mesh
+		leftoverMesh = lTrayWidth - MESH_SECTION_WIDTH + 2 * MESH_OFFSET + MESH_SPACING;
+		expressions = [{
+			productId: meshCPrt, toUpdateMembers: [{ name: "Leftover", value: leftoverMesh }]
+		}, {
+			productId: meshPrt, toUpdateMembers: [{ name: "Section_Width", value: MESH_SECTION_WIDTH}]
+		}];
+	ELSE	// whole mesh or cutted mesh
+		leftoverMesh = lTrayWidth + 2 * MESH_OFFSET;
+		expressions = [{
+			productId: meshPrt, toUpdateMembers: [{ name: "Section_Width", value: leftoverMesh }]
+		}];
+	ENDIF
+	@FeatureAPI_v1.UpdateExpression([
+		{ productId: trayPrt, toUpdateMembers: [{ name: "Width", value: lTrayWidth }] },
+		{ productId: deckingPrt, toUpdateMembers: [{ name: "TrayWidth", value: lTrayWidth }] },
+		{ productId: flashingPrt, toUpdateMembers: [{ name: "TrayWidth", value: lTrayWidth }] },
+		{ productId: hipCPrt, toUpdateMembers: [{ name: "Leftover", value: leftoverHip }] }
+	]);
+	@FeatureAPI_v1.UpdateExpression(expressions);
+ENDPROC
+
+// Update number of hips depending on tray width
+PROC UpdateNofHips
+	PAR lTrayWidth;
+	VAR nofHips, leftover, nofCurrHipInstances, x, instances, i, tempCurrHipInstances, toRemoveInstances;
+
+  nofHips = div((lTrayWidth - BEAM_WEB_THICKNESS), HIP_MODULE_SIZE);
+  leftover = (lTrayWidth - BEAM_WEB_THICKNESS) - (nofHips * HIP_MODULE_SIZE);
+  currHipInstances = @AssemblyBuilderAPI_v1.GetInstance({ ownerId: hipAsm });
+  nofCurrHipInstances = LEN(currHipInstances);
+  toRemoveInstances = [];
+
+  IF (nofHips < nofCurrHipInstances - 1) THEN	// Remove as many as needed
+		tempCurrHipInstances = CADH_CopyArray(currHipInstances);
+  	CADH_CutArray(tempCurrHipInstances, nofHips);
+  	toRemoveInstances = CADH_Difference(currHipInstances, tempCurrHipInstances);
+		@AssemblyBuilderAPI_v1.RemoveInstance({ ids: toRemoveInstances });
+  ELSIF (nofHips > nofCurrHipInstances - 1) THEN	// Remove only cutted one
+		tempCurrHipInstances = CADH_CopyArray(currHipInstances);
+  	CADH_CutArray(tempCurrHipInstances, nofCurrHipInstances - 1);
+  	toRemoveInstances = CADH_Difference(currHipInstances, tempCurrHipInstances);
+		@AssemblyBuilderAPI_v1.RemoveInstance({ ids: toRemoveInstances });
+  ENDIF
+  
+	// Add as many as needed, start adding from existing ones
+  instances = [];
+  IF (nofHips > nofCurrHipInstances - 1) THEN
+  	x = (nofCurrHipInstances - 1) * HIP_MODULE_SIZE;
+  	FOR i = nofCurrHipInstances TO nofHips DO
+  		CADH_InsArray(instances, -1, { productId: hipPrt, ownerId: hipAsm, transformation: [{x,0,0}, xDir, yDir], name: "Hip" + i });
+  		x = x + HIP_MODULE_SIZE;
+  	NEXT
+  	@AssemblyBuilderAPI_v1.AddInstances(instances);
+  ENDIF
+  
+	// Add the cutted hip instance again, so that it will be at the end of the list
+  IF (nofHips != (nofCurrHipInstances - 1)) THEN
+  	IF (leftover > 0) THEN
+  		@AssemblyBuilderAPI_v1.AddInstances({
+				productId: hipCPrt, ownerId: hipAsm, transformation: [{nofHips * HIP_MODULE_SIZE,0,0}, xDir, yDir], name: "HipC0"
+			});
+  	ENDIF
+  ENDIF
+ENDPROC
+
+// Updates the number of meshes depending on the tray width
+PROC UpdateNofMeshes
+	PAR lTrayWidth;
+	VAR nofMeshes, instanceToRemove;
+	IF ((lTrayWidth + 2 * MESH_OFFSET) > MESH_SECTION_WIDTH) THEN
+		nofMeshes = 2;
+	ELSE
+		nofMeshes = 1;
+	ENDIF
+	// If more than one mesh already exists, remove the cutted mesh
+	currMeshInstances = @AssemblyBuilderAPI_v1.GetInstance({ ownerId: meshAsm });
+	IF (nofMeshes < 2 AND LEN(currMeshInstances) > 1) THEN
+		instanceToRemove = @AssemblyBuilderAPI_v1.GetInstance({ ownerId: meshAsm, name: "MeshC" });
+		@AssemblyBuilderAPI_v1.RemoveInstance({ ids: [instanceToRemove] });
+	ENDIF
+  IF (nofMeshes > 1 AND LEN(currMeshInstances) < 2) THEN
+		currMeshInstances = @AssemblyBuilderAPI_v1.AddInstances({
+			productId: meshCPrt,
+			ownerId: meshAsm,
+			transformation: [{0,MESH_SECTION_WIDTH - MESH_SPACING,0}, xDir, yDir],
+			name: "MeshC"
+		});
+  ENDIF
+ENDPROC
+
+// Load template and set root id
+rootId = @BaseModelerAPI_v1.LoadFromUrl({
+	url: "https://raw.githubusercontent.com/dm385/cad-files/main/tray-assembly/Tray_Assembly_LowTess.ofb",
+	fileType: "ofb",
+	ident: "TrayAsm"
+});
+IF LEN(rootId) > 1 THEN
+	RETURN;
+ENDIF
+rootId = rootId[0];
+xDir = {1,0,0};
+yDir = {0,1,0};
+
+// Parameter
+trayWidth = 2654;
+
+// Some constant values for calculations
+HIP_MODULE_SIZE = 300;
+BEAM_WEB_THICKNESS = 6.9;
+MESH_OFFSET = 180;
+MESH_SECTION_WIDTH = 2400;
+MESH_SPACING = 120;
+
+// Get important parts, assemblies and instances
+trayPrt = @AssemblyBuilderAPI_v1.GetPartTemplate({ name: "Tray" });
+hipAsm = @AssemblyBuilderAPI_v1.GetAssemblyTemplate({ name: "Hip_Assembly" });
+meshAsm = @AssemblyBuilderAPI_v1.GetAssemblyTemplate({ name: "Mesh_Assembly" });
+hipPrt = @AssemblyBuilderAPI_v1.GetPartTemplate({ name: "Hip" });
+hipCPrt = @AssemblyBuilderAPI_v1.GetPartTemplate({ name: "HipC" });
+deckingPrt = @AssemblyBuilderAPI_v1.GetPartTemplate({ name: "Decking" });
+flashingPrt = @AssemblyBuilderAPI_v1.GetPartTemplate({ name: "Flashing" });
+meshPrt = @AssemblyBuilderAPI_v1.GetPartTemplate({ name: "Mesh" });
+meshCPrt = @AssemblyBuilderAPI_v1.GetPartTemplate({ name: "MeshC" });
+currHipInstances = @AssemblyBuilderAPI_v1.GetInstance({ ownerId: hipAsm});
+currMeshInstances = @AssemblyBuilderAPI_v1.GetInstance({ ownerId: meshAsm});
+
+// Update relevant templates and instances
+UpdateTrayWidth(trayWidth);
+UpdateNofHips(trayWidth);
+UpdateNofMeshes(trayWidth);
+
+RETURN;
