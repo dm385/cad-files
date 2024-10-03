@@ -1,0 +1,50 @@
+PAR param;
+VAR rootId, height, width, depth, nbrT, nbrS, distS, shelfPrt, legPrt, lPConstr, lPConstr0;
+
+IF !ISVOID(param) THEN
+  height = param.height;
+  width = param.width;
+  depth = param.depth;
+  nbrT = param.nbrT;
+ELSE
+  height = 320;
+  width = 250;
+  depth = 125;
+  nbrT = 3;
+ENDIF
+
+// Load template
+rootId = @BaseModelerAPI_v1.LoadFromUrl({
+  url: "https://raw.githubusercontent.com/dm385/cad-files/main/rack-assembly/Rack.ofb", fileType: "ofb", doClearDrawingAndInitialiseBM: TRUE
+});
+IF LEN(rootId) > 1 THEN
+	RETURN;
+ENDIF
+rootId = rootId[0];
+shelfPrt = @AssemblyBuilderAPI_v1.GetPartTemplate({ name: "Shelfs"});
+legPrt = @AssemblyBuilderAPI_v1.GetPartTemplate({ name: "Legs"});
+lPConstr = @AssemblyBuilderAPI_v1.GetLinearPatternConstraint({ refId: rootId, constrName: "Linear Pattern" });
+lPConstr0 = @AssemblyBuilderAPI_v1.GetLinearPatternConstraint({ refId: rootId, constrName: "Linear Pattern0" });
+
+// Update expressions
+@FeatureAPI_v1.UpdateExpression([{ 
+    productId: shelfPrt, toUpdateMembers: [
+      { name: "RL", value: width },
+      { name: "RD", value: depth }
+    ]
+  }, {
+    productId: legPrt, toUpdateMembers: [
+      { name: "H", value: height },
+      { name: "RD", value: depth }
+    ]
+  }
+]);
+
+nbrS = div((height - 10), 70);
+distS = (height - 10) / nbrS;
+lPConstr["firstDirCount"] = nbrT;
+lPConstr0["firstDirCount"] = nbrS + 1;
+lPConstr0["firstDirDistance"] = distS;
+lPConstr0["secondDirCount"] = nbrT - 1;
+@AssemblyBuilderAPI_v1.CreateOrUpdateLinearPatternConstraint([lPConstr, lPConstr0]);
+RETURN param;
