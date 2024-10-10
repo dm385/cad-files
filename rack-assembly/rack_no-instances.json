@@ -1,1 +1,85 @@
-{"ident":"Rack","instances":[{"ident":"Shelfs","template":"Shelfs"},{"ident":"Legs0","template":"Legs"}],"templates":[{"ident":"Shelfs","type":"part","reference":{"location":"https://raw.githubusercontent.com/dm385/cad-files/main/Shelfs.ofb","type": "ofb"}},{"ident":"Legs","type":"part","reference":{"location":"https://raw.githubusercontent.com/dm385/cad-files/main/Legs.ofb", "type": "ofb"}}],"constraints":[{"type":"CC_FastenedOriginConstraint","mate1":{"path":["/Rack/Legs0"],"csys":"WorkCSys","flip":4,"reorient":0}},{"type":"CC_FastenedConstraint","mate1":{"path":["/Rack/Legs0"],"csys":"WorkCSys","flip":4,"reorient":0},"mate2":{"path":["/Rack/Shelfs"],"csys":"WorkCSys0","flip":4,"reorient":0}},{"type":"CC_LinearPatternConstraint","firstDirInstanceCount":5,"secondDirInstanceCount":1,"firstDirDistance":260,"secondDirDistance":0,"instances":["/Rack/Legs0"],"mate1":{"path":["/Rack/Legs0"],"csys":"WorkCSys","flip":0,"reorient":0}},{"type":"CC_LinearPatternConstraint","firstDirInstanceCount":3,"secondDirInstanceCount":4,"firstDirDistance":95,"secondDirDistance":260,"instances":["/Rack/Shelfs"],"mate1":{"path":["/Rack/Shelfs"],"csys":"WorkCSys0","flip":4,"reorient":0},"mate2":{"path":["/Rack/Legs0"],"csys":"WorkCSys","flip":0,"reorient":0}}]}
+{
+  "ident": "Rack",
+  "instances": [
+    { "ident": "Shelfs", "template": "Shelfs" },
+    { "ident": "Legs0", "template": "Legs" }
+  ],
+  "templates": [
+    {
+      "ident": "Shelfs",
+      "type": "part",
+      "reference": {
+        "location": "https://raw.githubusercontent.com/dm385/cad-files/refs/heads/main/rack-assembly/Shelfs.ofb",
+        "type": "ofb"
+      }
+    },
+    {
+      "ident": "Legs",
+      "type": "part",
+      "reference": {
+        "location": "https://raw.githubusercontent.com/dm385/cad-files/refs/heads/main/rack-assembly/Legs.ofb",
+        "type": "ofb"
+      }
+    }
+  ],
+  "constraints": [
+    {
+      "type": "CC_FastenedOriginConstraint",
+      "mate1": {
+        "path": ["/Rack/Legs0"],
+        "csys": "WorkCSys",
+        "flip": 4,
+        "reorient": 0
+      }
+    },
+    {
+      "type": "CC_FastenedConstraint",
+      "mate1": {
+        "path": ["/Rack/Legs0"],
+        "csys": "WorkCSys",
+        "flip": 4,
+        "reorient": 0
+      },
+      "mate2": {
+        "path": ["/Rack/Shelfs"],
+        "csys": "WorkCSys0",
+        "flip": 4,
+        "reorient": 0
+      }
+    },
+    {
+      "type": "CC_LinearPatternConstraint",
+      "firstDirInstanceCount": 5,
+      "secondDirInstanceCount": 1,
+      "firstDirDistance": 260,
+      "secondDirDistance": 0,
+      "instances": ["/Rack/Legs0"],
+      "mate1": {
+        "path": ["/Rack/Legs0"],
+        "csys": "WorkCSys",
+        "flip": 0,
+        "reorient": 0
+      }
+    },
+    {
+      "type": "CC_LinearPatternConstraint",
+      "firstDirInstanceCount": 3,
+      "secondDirInstanceCount": 4,
+      "firstDirDistance": 95,
+      "secondDirDistance": 260,
+      "instances": ["/Rack/Shelfs"],
+      "mate1": {
+        "path": ["/Rack/Shelfs"],
+        "csys": "WorkCSys0",
+        "flip": 4,
+        "reorient": 0
+      },
+      "mate2": {
+        "path": ["/Rack/Legs0"],
+        "csys": "WorkCSys",
+        "flip": 0,
+        "reorient": 0
+      }
+    }
+  ]
+}
