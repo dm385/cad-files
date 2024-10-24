@@ -1,0 +1,20 @@
+PAR param;
+VAR part, success, box, update;
+
+update = TRUE;
+
+part = @PartAPI_v1.newPart();
+success = @PartAPI_v1.updateExpression({ productId: part, toAddMembers: [
+  { name: "height", value: 120 },
+  { name: "width", value: "height + 50" }
+]});
+
+IF success THEN
+  @PartAPI_v1.box({ partId: part, height: "ExpressionSet.height", width: "ExpressionSet.width" });
+  IF update THEN
+    success = @PartAPI_v1.updateExpression({ productId: part, toUpdateMembers: [
+      { name: "height", value: 250 },
+      { name: "width", value: "height + 50" }
+    ]});
+  ENDIF
+ENDIF

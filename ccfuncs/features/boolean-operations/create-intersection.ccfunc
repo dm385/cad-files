@@ -1,0 +1,7 @@
+PAR param;
+VAR part, box, cylinder;
+
+part = @PartAPI_v1.newPart();
+box = @PartAPI_v1.box({ partId: part });
+cylinder = @PartAPI_v1.cylinder({ partId: part });
+@PartAPI_v1.boolean({ partId: part, type: 2, target: { id: box }, tools: [{ id: cylinder }] });

@@ -1,0 +1,7 @@
+PAR param;
+VAR part;
+part = @PartAPI_v1.newPart();
+
+// sphere with default values
+@PartAPI_v1.sphere({ partId: part });
+

@@ -1,0 +1,12 @@
+PAR param;
+VAR part, box, workAxis;
+part = @PartAPI_v1.newPart();
+
+// box
+box = @PartAPI_v1.box({ partId: part, width: 10, length: 10, height: 20 });
+
+// work axis in x-direction
+workAxis = @PartAPI_v1.workAxis({ partId: part  });
+
+// linear pattern
+@PartAPI_v1.linearPattern({ partId: part, targets: [{ id: box }], references: [workAxis], firstDirParams: { count: 5, distance: 15 } });

@@ -1,0 +1,13 @@
+PAR param;
+VAR part, sphere, workAxis, entityToPattern, wcs;
+part = @PartAPI_v1.newPart();
+
+// sphere
+wcs = @PartAPI_v1.workCSys({ partId: part, name: "WCS", offset: {0,200,0}});
+sphere = @PartAPI_v1.sphere({ partId: part, radius: 20, references: [wcs] });
+
+// work axis in z-direction (rotation axis)
+workAxis = @PartAPI_v1.workAxis({ partId: part, direction: {0,0,1}  });
+
+// linear pattern
+@PartAPI_v1.circularPattern({ partId: part, targets: [{ id: sphere }], references: [workAxis], angle: "30g", count: 12 });

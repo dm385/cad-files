@@ -1,0 +1,16 @@
+PAR param;
+VAR root, instances;
+
+root = @BaseModelerAPI_v1.loadFromUrl({
+	url: "https://raw.githubusercontent.com/dm385/cad-files/main/BoxAssembly.ofb",
+	fileType: "ofb",
+	doClearDrawingAndInitialiseBM: TRUE,
+	ident: "BoxAsm"
+});
+IF LEN(root) > 1 THEN
+	RETURN;
+ENDIF
+root = root[0];
+
+instances = @AssemblyAPI_v1.getInstance({ ownerId: root });
+@AssemblyAPI_v1.removeInstance({ id: instances[0].id});

@@ -1,0 +1,20 @@
+PAR param;
+VAR root, prt1, prt2, wcsPrt1, wcsPrt2, instances;
+
+@CommonAPI.Clear();
+
+root = @AssemblyAPI_v1.createRootAssembly();
+
+prt1 = @AssemblyAPI_v1.createPartAsTemplate();
+prt2 = @AssemblyAPI_v1.createPartAsTemplate();
+
+wcsPrt1 = @PartAPI_v1.workCSys({ partId: prt1 });
+@PartAPI_v1.box({ partId: prt1, references: [wcsPrt1] });
+
+wcsPrt2 = @PartAPI_v1.workCSys({ partId: prt2 });
+@PartAPI_v1.box({ partId: prt2, references: [wcsPrt2], height: 50 });
+
+instances = @AssemblyAPI_v1.addInstance([
+  { productId: prt1, ownerId: root },
+  { productId: prt2, ownerId: root, transformation: [{0,200,0}, {1,0,0}, {0,1,0}] }
+]);

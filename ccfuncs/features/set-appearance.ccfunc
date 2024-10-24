@@ -1,0 +1,22 @@
+PAR param;
+VAR part, sphere, workAxis, wcs, circularPattern;
+
+@CommonAPI.Clear();
+
+part = @PartAPI_v1.newPart();
+
+// sphere
+wcs = @PartAPI_v1.workCSys({ partId: part, name: "WCS", offset: {0,200,0}});
+sphere = @PartAPI_v1.sphere({ partId: part, radius: 20, references: [wcs] });
+
+// work axis in z-direction (rotation axis)
+workAxis = @PartAPI_v1.workAxis({ partId: part, direction: {0,0,1} });
+
+// circular pattern
+circularPattern = @PartAPI_v1.circularPattern({ partId: part,
+	targets: [{ id: sphere }], references: [workAxis], angle: "15g", count: 24 });
+	
+@PartAPI_v1.setAppearance([
+ 	{ target: { id: circularPattern, indices: [2,4,6,8]}, appearance: { color: { r: 0, g: 0, b: 0 }}},
+ 	{ target: { id: circularPattern, indices: [1,3,5,7]}, appearance: { color: { r: 255, g: 255, b: 255 }}}
+]);

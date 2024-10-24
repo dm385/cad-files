@@ -1,0 +1,33 @@
+PAR param;
+VAR part, wcs0, wcs1, wcs2, wcs3, box, sphere, cylinder, cone;
+part = @PartAPI_v1.newPart();
+
+// box
+wcs0 = @PartAPI_v1.workCSys({ partId: part, name: "WCS0"});
+box = @PartAPI_v1.box({ partId: part, references: [wcs0] });
+@PartAPI_v1.openFeature({ id: box });
+@PartAPI_v1.box({ featureId: box, length: 200 });
+@PartAPI_v1.closeFeature({ id: box });
+
+// sphere
+wcs1 = @PartAPI_v1.workCSys({ partId: part, name: "WCS1", offset: {0,0,150}});
+sphere = @PartAPI_v1.sphere({ partId: part });
+@PartAPI_v1.openFeature({ id: sphere });
+@PartAPI_v1.sphere({ featureId: sphere, radius: 30, references: [wcs1] });
+@PartAPI_v1.closeFeature({ id: sphere });
+
+//cylinder
+wcs2 = @PartAPI_v1.workCSys({ partId: part, name: "WCS2", rotation: {0,-C:PI/2,0}});
+cylinder = @PartAPI_v1.cylinder({ partId: part, height: 50 });
+@PartAPI_v1.openFeature({ id: cylinder });
+@PartAPI_v1.cylinder({ featureId: cylinder, diameter: 50, references: [wcs2] });
+@PartAPI_v1.closeFeature({ id: cylinder });
+
+// cone
+wcs3 = @PartAPI_v1.workCSys({ partId: part, name: "WCS3", offset: {0,-100,0}});
+cone = @PartAPI_v1.cone({ partId: part });
+@PartAPI_v1.openFeature({ id: cone });
+@PartAPI_v1.cone({ featureId: cone, bDiameter: 50, tDiameter: 10, height: 150, references: [wcs3] });
+@PartAPI_v1.closeFeature({ id: cone });
+
+RETURN [part];

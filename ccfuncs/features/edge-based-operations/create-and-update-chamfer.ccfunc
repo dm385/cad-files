@@ -1,0 +1,14 @@
+PAR param;
+VAR part, edges, distance, chamfer;
+
+IF !ISVOID(param) THEN
+  distance = param.distance;
+ENDIF
+
+part = @PartAPI_v1.newPart();
+@PartAPI_v1.box({ partId: part });
+edges = @GeometryAPI_v1.findGeometriesByPoints({ partId: part, type: "line", pointsArray:
+  [[{50,0,100}], [{100,50,100}], [{0,50,100}], [{50,100,100}]]});
+chamfer = @PartAPI_v1.chamfer({ partId: part, references: edges, distance1: distance });
+@PartAPI_v1.openFeature({ id: chamfer });
+@PartAPI_v1.chamfer({ featureId: chamfer, references: edges, distance1: 20 });

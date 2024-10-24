@@ -1,0 +1,14 @@
+/**
+ * Returns the greatest integer less than or equal to its numeric argument.
+ *
+ * @param number a numeric expression
+ */
+PAR number;
+VAR roundedNbr;
+number = 3.6;
+roundedNbr = round(number, 0);
+IF (roundedNbr > number) THEN
+	RETURN round((number - 1), 0);
+ELSE
+	RETURN number;
+ENDIF

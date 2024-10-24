@@ -1,0 +1,11 @@
+PAR param;
+VAR part, import;
+
+part = @PartAPI_v1.newPart();
+
+import = @PartAPI_v1.import({
+  partId: part,
+  url: "https://raw.githubusercontent.com/dm385/cad-files/refs/heads/main/step-files/Bolt_M22.stp",
+  format: "STP",
+  name: "TestImportUrl"
+});

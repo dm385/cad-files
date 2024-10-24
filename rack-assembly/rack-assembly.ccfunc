@@ -14,20 +14,20 @@ ELSE
 ENDIF
 
 // Load template
-rootId = @BaseModelerAPI_v1.LoadFromUrl({
+rootId = @BaseModelerAPI_v1.loadFromUrl({
   url: "https://raw.githubusercontent.com/dm385/cad-files/main/rack-assembly/Rack.ofb", fileType: "ofb", doClearDrawingAndInitialiseBM: TRUE
 });
 IF LEN(rootId) > 1 THEN
 	RETURN;
 ENDIF
 rootId = rootId[0];
-shelfPrt = @AssemblyBuilderAPI_v1.GetPartTemplate({ name: "Shelfs"});
-legPrt = @AssemblyBuilderAPI_v1.GetPartTemplate({ name: "Legs"});
-lPConstr = @AssemblyBuilderAPI_v1.GetLinearPatternConstraint({ refId: rootId, constrName: "Linear Pattern" });
-lPConstr0 = @AssemblyBuilderAPI_v1.GetLinearPatternConstraint({ refId: rootId, constrName: "Linear Pattern0" });
+shelfPrt = @AssemblyAPI_v1.getPartTemplate({ name: "Shelfs"});
+legPrt = @AssemblyAPI_v1.getPartTemplate({ name: "Legs"});
+lPConstr = @AssemblyAPI_v1.getLinearPatternConstraint({ refId: rootId, name: "Linear Pattern" });
+lPConstr0 = @AssemblyAPI_v1.getLinearPatternConstraint({ refId: rootId, name: "Linear Pattern0" });
 
 // Update expressions
-@FeatureAPI_v1.UpdateExpression([{ 
+@PartAPI_v1.updateExpression([{ 
     productId: shelfPrt, toUpdateMembers: [
       { name: "RL", value: width },
       { name: "RD", value: depth }
@@ -46,5 +46,5 @@ lPConstr["firstDirCount"] = nbrT;
 lPConstr0["firstDirCount"] = nbrS + 1;
 lPConstr0["firstDirDistance"] = distS;
 lPConstr0["secondDirCount"] = nbrT - 1;
-@AssemblyBuilderAPI_v1.CreateOrUpdateLinearPatternConstraint([lPConstr, lPConstr0]);
+@AssemblyAPI_v1.linearPatternConstraint([lPConstr, lPConstr0]);
 RETURN param;

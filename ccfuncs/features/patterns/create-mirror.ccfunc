@@ -1,0 +1,10 @@
+PAR param;
+VAR part, box, workPlane, entityToPattern;
+part = @PartAPI_v1.newPart();
+
+// box
+box = @PartAPI_v1.box({ partId: part });
+
+// plane and mirror
+workPlane = @PartAPI_v1.workPlane({ partId: part, offset: 150, normal: {1,0,1} });
+@PartAPI_v1.mirror({ partId: part, targets: [{ id: box }], references: [workPlane] });

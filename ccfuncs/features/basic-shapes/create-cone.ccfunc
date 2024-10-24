@@ -1,0 +1,7 @@
+PAR param;
+VAR part;
+part = @PartAPI_v1.newPart();
+
+// cone with default values
+@PartAPI_v1.cone({ partId: part });
+

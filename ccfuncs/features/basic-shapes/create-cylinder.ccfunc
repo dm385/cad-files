@@ -1,0 +1,7 @@
+PAR param;
+VAR part, wcs;
+part = @PartAPI_v1.newPart();
+
+// cylinder
+wcs = @PartAPI_v1.workCSys({ partId: part, name: "WCS"});
+@PartAPI_v1.cylinder({ partId: part, references: [wcs], height: 250 });

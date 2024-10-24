@@ -1,63 +1,61 @@
 PAR param;
-VAR plugPos, rootId, instances, instance, instName, frame0Inst, frame1Inst, framePrt, fcEPlug, fcPPlug,
-		wcss, wcs, wcsName, wcsEPlugFrameLeft, wcsEPlugFrameRight, wcsPPlugFrameLeft, wcsPPlugFrameRight,
-		fcs, fc, fcName, constraintSet, wcsIdEPlug, wcsIdPPlug, geometrySet,
+VAR plugPos, rootId, frame0Inst, frame1Inst, fcEPlug, fcPPlug,
+		wcsEPlugFrameLeft, wcsEPlugFrameRight, wcsPPlugFrameLeft, wcsPPlugFrameRight,
 		firstRefMateEPlug, firstRefMatePPlug;
 
 IF ISVOID(param) OR ISVOID(param.plugPos) THEN
-	plugPos = 3;
+	plugPos = 2;
 ELSE
 	plugPos = param.plugPos;
 ENDIF
 
 // Load template and set root id
-rootId = @BaseModelerAPI.LoadFromUrl("https://raw.githubusercontent.com/dm385/cad-files/main/fms-roller-assembly/RollerTemplate.ofb", "ofb", TRUE, ["RollerAsm"]);
+rootId = @BaseModelerAPI_v1.loadFromUrl({
+  url: "https://raw.githubusercontent.com/dm385/cad-files/main/fms-roller-assembly/RollerTemplate.ofb",
+	fileType: "ofb",
+	doClearDrawingAndInitialiseBM: TRUE,
+	ident: "RollerAsm"
+});
+
 IF LEN(rootId) > 1 THEN
 	RETURN;
 ENDIF
 rootId = rootId[0];
+
 // Get necessary instances
-frame0Inst = _O.AssemblyBuilder.GetInstance(rootId, "Frame0");
-frame1Inst = _O.AssemblyBuilder.GetInstance(rootId, "Frame1");
+frame0Inst = @AssemblyAPI_v1.getInstance({ ownerId: rootId, name: "Frame0"});
+frame1Inst = @AssemblyAPI_v1.getInstance({ ownerId: rootId, name: "Frame1"});
+
 // Get necessary work coord systems
-framePrt = frame0Inst.GetProductId();
-geometrySet = framePrt.GetGeometrySet();
-wcss = geometrySet.OBJ_GetChildren(1, "CC_WorkCSys");
-FORALL wcss wcs DO
-	wcsName = wcs.OBJ_GetName(FALSE);
-	IF wcsName = "Plug_csys" THEN
-		wcsEPlugFrameLeft = wcs;
-	ELSIF wcsName = "Plug2_csys" THEN
-		wcsEPlugFrameRight = wcs;
-	ELSIF wcsName = "Screw_csys" THEN
-		wcsPPlugFrameLeft = wcs;
-	ELSIF wcsName = "Screw2_csys" THEN
-		wcsPPlugFrameRight = wcs;
-	ENDIF
-NEXT
+wcsEPlugFrameLeft = @PartAPI_v1.getGeometryByName({ refId: frame0Inst.id, name: "Plug_csys" });
+wcsEPlugFrameRight = @PartAPI_v1.getGeometryByName({ refId: frame0Inst.id, name: "Plug2_csys" });
+wcsPPlugFrameLeft = @PartAPI_v1.getGeometryByName({ refId: frame0Inst.id, name: "Screw_csys" });
+wcsPPlugFrameRight = @PartAPI_v1.getGeometryByName({ refId: frame0Inst.id, name: "Screw2_csys" });
+
 // Get necessary fastened constraints
-constraintSet = rootId.GetConstraintSet();
-fcEPlug = constraintSet.GetConstraint("Fastened_ElectricPlug");
-fcPPlug = constraintSet.GetConstraint("Fastened_PneumaticPlug");
-// Configure constraints depending on plug position (0,1,2,3)
+fcEPlug = @AssemblyAPI_v1.getFastenedConstraint({ refId: rootId, name: "Fastened_ElectricPlug" });
+fcPPlug = @AssemblyAPI_v1.getFastenedConstraint({ refId: rootId, name: "Fastened_PneumaticPlug" });
+
 SWITCH plugPos
 	CASE 0:
-		firstRefMateEPlug = [[frame0Inst], wcsEPlugFrameRight, 4, 0];
-		firstRefMatePPlug = [[frame0Inst], wcsPPlugFrameRight, 4, 0];
+		firstRefMateEPlug = { matePath: [frame0Inst.id], wcsId: wcsEPlugFrameRight, flipType: 4, reorientType: 0 };
+		firstRefMatePPlug = { matePath: [frame0Inst.id], wcsId: wcsPPlugFrameRight, flipType: 4, reorientType: 0 };
 	CASE 1:
-		firstRefMateEPlug = [[frame0Inst], wcsEPlugFrameLeft, 4, 0];
-		firstRefMatePPlug = [[frame0Inst], wcsPPlugFrameLeft, 4, 0];
+		firstRefMateEPlug = { matePath: [frame0Inst.id], wcsId: wcsEPlugFrameLeft, flipType: 4, reorientType: 0 };
+		firstRefMatePPlug = { matePath: [frame0Inst.id], wcsId: wcsPPlugFrameLeft, flipType: 4, reorientType: 0 };
 	CASE 2:
-		firstRefMateEPlug = [[frame1Inst], wcsEPlugFrameRight, 4, 0];
-		firstRefMatePPlug = [[frame1Inst], wcsPPlugFrameRight, 4, 0];
+		firstRefMateEPlug = { matePath: [frame1Inst.id], wcsId: wcsEPlugFrameRight, flipType: 4, reorientType: 0 };
+		firstRefMatePPlug = { matePath: [frame1Inst.id], wcsId: wcsPPlugFrameRight, flipType: 4, reorientType: 0 };
 	CASE 3:
-		firstRefMateEPlug = [[frame1Inst], wcsEPlugFrameLeft, 4, 0];
-		firstRefMatePPlug = [[frame1Inst], wcsPPlugFrameLeft, 4, 0];
+		firstRefMateEPlug = { matePath: [frame1Inst.id], wcsId: wcsEPlugFrameLeft, flipType: 4, reorientType: 0 };
+		firstRefMatePPlug = { matePath: [frame1Inst.id], wcsId: wcsPPlugFrameLeft, flipType: 4, reorientType: 0 };
 	DEFAULT:
-		firstRefMateEPlug = [[frame0Inst], wcsEPlugFrameRight, 4, 0];
-		firstRefMatePPlug = [[frame0Inst], wcsPPlugFrameRight, 4, 0];
+		firstRefMateEPlug = { matePath: [frame0Inst.id], wcsId: wcsEPlugFrameRight, flipType: 4, reorientType: 0 };
+		firstRefMatePPlug = { matePath: [frame0Inst.id], wcsId: wcsPPlugFrameRight, flipType: 4, reorientType: 0 };
 ENDSWITCH
+
 // Update the constraint for electrical and pneumatic plug
-@OperationsHelper.UpdateFastenedConstraint(fcEPlug, firstRefMateEPlug, fcEPlug.secondRefMate, 0, 0, 0, 0, 0, 0, FALSE);
-@OperationsHelper.UpdateFastenedConstraint(fcPPlug, firstRefMatePPlug, fcPPlug.secondRefMate, 0, 0, 0, 0, 0, 0, FALSE);
+fcEPlug["mate1Ref"] = firstRefMateEPlug;
+fcPPlug["mate1Ref"] = firstRefMatePPlug;
+@AssemblyAPI_v1.fastenedConstraint([fcEPlug, fcPPlug]);
 RETURN;

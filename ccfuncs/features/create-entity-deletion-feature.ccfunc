@@ -1,0 +1,20 @@
+PAR param;
+VAR part, box, workAxis, linearPattern, count;
+
+IF !ISVOID(param) THEN
+  count = param.count;
+ELSE
+  count = 7;
+ENDIF
+
+part = @PartAPI_v1.newPart();
+
+// box
+box = @PartAPI_v1.box({ partId: part, width: 10, length: 10, height: 20 });
+
+// work axis in x-direction
+workAxis = @PartAPI_v1.workAxis({ partId: part  });
+
+// linear pattern
+linearPattern = @PartAPI_v1.linearPattern({ partId: part, targets: [{ id: box }], references: [workAxis], firstDirParams: { count: count, distance: 15 } });
+@PartAPI_v1.entityDeletion({ partId: part, targets: [{ id: linearPattern, indices: [div(count,2)] }] });

@@ -1,0 +1,21 @@
+PAR param;
+VAR part, wcs, box, points, workPlane, length, width, height, solid;
+
+IF !ISVOID(param) THEN
+  length = param.length;  // box length
+  width = param.width;  // box width
+  height = param.height;  // box height
+ELSE
+  length = 100;
+  width = 100;
+  height = 100;
+ENDIF
+
+part = @PartAPI_v1.newPart();
+
+// box
+wcs = @PartAPI_v1.workCSys({ partId: part, name: "WCS"});
+box = @PartAPI_v1.box({ partId: part, references: [wcs], length: length, width: width, height: height });
+points = @GeometryAPI_v1.findGeometriesByPoints({ partId: part, type: "point", pointsArray: [[{0,0,height}], [{length,width,height}], [{0,width,0}]] });
+workPlane = @PartAPI_v1.workPlane({ partId: part, type: 12, references: points });
+@PartAPI_v1.slice({ partId: part, targets: [{ id: box }], reference: workPlane});

@@ -1,0 +1,11 @@
+PAR param;
+VAR part, edges, radius;
+
+IF !ISVOID(param) THEN
+  radius = param.radius;
+ENDIF
+
+part = @PartAPI_v1.newPart();
+@PartAPI_v1.cylinder({ partId: part });
+edges = @GeometryAPI_v1.findGeometriesByPoints({ partId: part, type: "circle", pointsArray: [[{0,0,100}]]});
+@PartAPI_v1.fillet({ partId: part, references: edges, radius: radius });

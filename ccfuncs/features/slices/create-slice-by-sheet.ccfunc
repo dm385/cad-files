@@ -1,0 +1,20 @@
+PAR param;
+VAR part, sketch, line1, line2, wcs, box, points, topPlane, extrusion, solidToSlice, sheet;
+
+part = @PartAPI_v1.newPart();
+
+// box
+wcs = @PartAPI_v1.workCSys({ partId: part, name: "WCS"});
+box = @PartAPI_v1.box({ partId: part, references: [wcs] });
+
+// sheet
+topPlane = @PartAPI_v1.getGeometryByName({ refId: part, name: "Top" });
+sketch = @SketchAPI_v1.createSketch({ partId: part });
+@SketchAPI_v1.setWorkPlane({ sketchId: sketch, planeId: topPlane });
+line1 = @SketchAPI_v1.addGeometry({ sketchId: sketch, type: "Line", geomTypeParams: { startPos: {-10,-10,0}, endPos: {50,50,0} } });
+line2 = @SketchAPI_v1.addGeometry({ sketchId: sketch, type: "Line", geomTypeParams: { startPos: {50,50,0}, endPos: {110,-10,0} } });
+@PartAPI_v1.closeFeature({ id: sketch });
+extrusion = @PartAPI_v1.extrusion({ partId: part, selectedIds: [line1, line2], limit2: 110, capEnds: FALSE });
+
+// slice
+@PartAPI_v1.sliceBySheet({ partId: part, target: { id: box }, tool: { id: extrusion } });

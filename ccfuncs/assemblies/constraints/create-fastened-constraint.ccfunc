@@ -1,0 +1,26 @@
+PAR param;
+VAR root, prt1, prt2, wcsPrt1, wcsPrt2, instances, foc, fc;
+
+root = @AssemblyAPI_v1.createRootAssembly();
+
+prt1 = @AssemblyAPI_v1.createPartAsTemplate();
+prt2 = @AssemblyAPI_v1.createPartAsTemplate();
+
+wcsPrt1 = @PartAPI_v1.workCSys({ partId: prt1 });
+@PartAPI_v1.box({ partId: prt1, references: [wcsPrt1] });
+
+wcsPrt2 = @PartAPI_v1.workCSys({ partId: prt2 });
+@PartAPI_v1.box({ partId: prt2, references: [wcsPrt2], height: 50 });
+
+instances = @AssemblyAPI_v1.addInstance([
+  { productId: prt1, ownerId: root },
+  { productId: prt2, ownerId: root, transformation: [{0,150,0}, {1,0,0}, {0,1,0}] }
+]);
+foc = @AssemblyAPI_v1.fastenedOriginConstraint({ assemblyId: root, mate1Ref: { matePath: [instances[0]], wcsId: wcsPrt1 } });
+fc = @AssemblyAPI_v1.fastenedConstraint({
+  assemblyId: root,
+  mate1Ref: { matePath: [instances[0]], wcsId: wcsPrt1 },
+  mate2Ref: { matePath: [instances[1]], wcsId: wcsPrt2 },
+  xOffset: 150,
+  yOffset: 150
+});
