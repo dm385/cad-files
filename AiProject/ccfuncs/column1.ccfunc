@@ -1,0 +1,50 @@
+PAR param;
+VAR part, success, box, update, wcs1, wcs2, b1, b2, wcs3, b3, wcs4, b4, b5, res, lpb, workAxis, height;
+
+@CommonAPI.Clear();
+
+IF !ISVOID(param) THEN
+  height = param.height;
+ ELSE
+  height =1500;
+ENDIF
+
+
+part = @PartAPI_v1.newPart({name: "Leg1"});
+success = @PartAPI_v1.updateExpression({ productId: part, toAddMembers: [
+  	{ name: "H", value: height },
+   	{ name: "L", value: 50 },
+    { name: "T", value: 5 }
+]});
+
+
+wcs1 = @PartAPI_v1.workCSys({ partId: part, name: "WCS1", offset: {0, 0, 0}});
+wcs2 = @PartAPI_v1.workCSys({ partId: part, name: "WCS2", offset: "{ExpressionSet.T, ExpressionSet.T, 0}"});
+
+b1 = @PartAPI_v1.box({ partId: part, references: [wcs1], length: "ExpressionSet.L", height: "ExpressionSet.H", width: "ExpressionSet.L" });
+b2 = @PartAPI_v1.box({ partId: part, references: [wcs2], length: "ExpressionSet.L- 2* ExpressionSet.T", height: "ExpressionSet.H", width: "ExpressionSet.L- 2* ExpressionSet.T" });
+  
+wcs3 = @PartAPI_v1.workCSys({ partId: part, name: "WCS3", offset: "{ExpressionSet.L/4, ExpressionSet.L/ 2, 0}"});
+b3 = @PartAPI_v1.box({ partId: part, references: [wcs3], length: "ExpressionSet.L /2", height: "ExpressionSet.H", width: "ExpressionSet.L * 2" });
+
+res = @PartAPI_v1.boolean({ partId: part, type: 1, target: { id: b1 }, tools: [{ id: b2 },{id: b3}] });
+
+wcs4 = @PartAPI_v1.workCSys({ partId: part, name: "WCS4", offset: {10, 0, 20}});
+b4 = @PartAPI_v1.box({ partId: part, references: [wcs4], length: 10, height: 20, width: 10 });
+
+lpb = @PartAPI_v1.linearPattern({ partId: part, targets: [{ id: b4 }], references: [26], 
+					firstDirParams: { count: 2, distance: 20, merged: TRUE }, references2: [34],
+					secondDirParams: { count: "div(ExpressionSet.H ,40) -1",  distance: 40}});
+					
+res = @PartAPI_v1.boolean({ partId: part, type: 1, target: { id: res }, tools: [{ id: lpb}] });
+
+
+b5 = @PartAPI_v1.box({ partId: part, length: 100, height: 5, width: 100 });
+
+workAxis = @PartAPI_v1.workAxis({ partId: part, direction: {-1,-1,0} });
+
+b5 = @PartAPI_v1.transformation({ partId: part, type: 0, targets: [{ id: b5 }], references: [workAxis], distanceOrAngle: sqrt(1250) });
+res = @PartAPI_v1.boolean({ partId: part, type: 0, target: { id: res }, tools: [{ id: b5}] });
+
+//@BaseModelerAPI.Save("C:\\tmp\\tmp.ofb");
+RETURN;
