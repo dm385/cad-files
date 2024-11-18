@@ -1,0 +1,38 @@
+PAR param;
+VAR part, wcs1, b1, b2, b3,b4, b5, wcs2, wcs3, wcs4, dLength, dDepth, res;
+
+@CommonAPI.Clear();
+
+IF !ISVOID(param) THEN
+  dLength = param.dLength;
+	dDepth = param.dDepth;
+ ELSE
+  dLength = 1000;
+	dDepth = 250;
+ENDIF
+
+part = @PartAPI_v1.newPart({ name: "SimpleShelf" });
+
+@PartAPI_v1.updateExpression({ productId: part, toAddMembers: [
+  	{ name: "L", value: dLength },
+   	{ name: "D", value: dDepth },
+    { name: "T", value: 10 }
+]});
+
+wcs1 = @PartAPI_v1.workCSys({ partId: part, name: "WCS1", offset: {0, 0, 0}});
+b1 = @PartAPI_v1.box({ partId: part, references: [wcs1], length: "ExpressionSet.L", height: "2*ExpressionSet.T", width: "ExpressionSet.T" });
+b2 = @PartAPI_v1.box({ partId: part, references: [wcs1], length: "ExpressionSet.T" , height: "2*ExpressionSet.T", width: "ExpressionSet.D" });
+
+wcs2 = @PartAPI_v1.workCSys({ partId: part, name: "WCS2", offset: "{ExpressionSet.L - ExpressionSet.T, 0, 0}"});
+b3 = @PartAPI_v1.box({ partId: part, references: [wcs2], length: "ExpressionSet.T" , height: "2*ExpressionSet.T", width: "ExpressionSet.D" });
+
+wcs3  = @PartAPI_v1.workCSys({ partId: part, name: "WCS3", offset: "{0, ExpressionSet.D - ExpressionSet.T, 0}"});
+b4 = @PartAPI_v1.box({ partId: part, references: [wcs3], length: "ExpressionSet.L", height: "2*ExpressionSet.T", width: "ExpressionSet.T" });
+
+res = @PartAPI_v1.boolean({ partId: part, type: 0, target: { id: b1 }, tools: [{ id: b2},{ id: b3},{ id: b4}] });
+
+wcs4 = @PartAPI_v1.workCSys({ partId: part, name: "WCS1", offset: "{ExpressionSet.T, ExpressionSet.T, ExpressionSet.T}"});
+
+b5 = @PartAPI_v1.box({ partId: part, references: [wcs4], length: "ExpressionSet.L - 2*ExpressionSet.T", height: "ExpressionSet.T", width: "ExpressionSet.D - 2*ExpressionSet.T"});
+
+RETURN;

@@ -1,0 +1,72 @@
+PAR param;
+VAR root, legId, shelfId, column, plate, wcsPrt1, wcsPrt2, instances, foc, fc, fc1, fc2, height, cwidth, clength, length, depth;
+
+root = @AssemblyAPI_v1.createRootAssembly();
+height = 200;
+cwidth = 10;
+clength = 10;
+
+length =500;
+depth = 200;
+column = @AssemblyAPI_v1.createPartAsTemplate();
+plate = @AssemblyAPI_v1.createPartAsTemplate();
+
+//column = @AssemblyAPI_v1.loadProduct({file: "C://tmp/Leg1.ofb"});
+
+column = @AssemblyAPI_v1.loadProduct({ url: "https://raw.githubusercontent.com/dm385/cad-files/refs/heads/main/AiProject/Column1.ofb""});
+
+wcsPrt2 = @PartAPI_v1.getGeometryByName({refId: shelfId, name: "WcsOrigin"});
+
+
+
+wcsPrt1 = @PartAPI_v1.getGeometryByName(refid: column, name: WcsOrigin );
+wcsPrt2 = @PartAPI_v1.getGeometryByName(refid: column, name: WcsOrigin );
+*/
+// Update expressions
+@PartAPI_v1.updateExpression([{ 
+    productId: shelfId, toUpdateMembers: [
+      { name: "RL", value: length -10 },
+      { name: "RD", value: depth }
+    ]
+  },
+  { 
+    productId: column, toUpdateMembers: [
+      { name: "H", value: height}
+    ]
+  }
+]);
+
+instances = @AssemblyAPI_v1.addInstance([
+  { productId: column, ownerId: root },
+  { productId: column, ownerId: root },
+  { productId: column, ownerId: root },
+  { productId: column, ownerId: root },
+  { productId: plate , ownerId: root, transformation: [{10,0,20}, {1,0,0}, {0,1,0}] },
+  { productId: plate, ownerId: root, transformation: [{10,0, height / 2}, {1,0,0}, {0,1,0}] },
+  { productId: plate, ownerId: root, transformation: [{10,0,height}, {1,0,0}, {0,1,0}] }
+]);
+
+
+
+foc = @AssemblyAPI_v1.fastenedOriginConstraint({ assemblyId: root, mate1Ref: { matePath: [instances[0]], wcsId: wcsPrt1 } });
+fc = @AssemblyAPI_v1.fastenedConstraint({
+  assemblyId: root,
+  mate1Ref: { matePath: [instances[0]], wcsId: wcsPrt1 },
+  mate2Ref: { matePath: [instances[1]], wcsId: wcsPrt1 },
+  xOffset: length,
+  yOffset: 0
+});
+fc1 = @AssemblyAPI_v1.fastenedConstraint({
+  assemblyId: root,
+  mate1Ref: { matePath: [instances[0]], wcsId: wcsPrt1 },
+  mate2Ref: { matePath: [instances[2]], wcsId: wcsPrt1, reorientType: 2},
+  yOffset: depth,
+  xOffset: clength
+});
+fc2 = @AssemblyAPI_v1.fastenedConstraint({
+  assemblyId: root,
+  mate1Ref: { matePath: [instances[3]], wcsId: wcsPrt1 },
+  mate2Ref: { matePath: [instances[2]], wcsId: wcsPrt1 },
+  xOffset: length
+});
+@BaseModelerAPI.Save("C:\\tmp\\tmp.ofb");

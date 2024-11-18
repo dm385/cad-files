@@ -10,7 +10,7 @@ IF !ISVOID(param) THEN
 ENDIF
 
 
-part = @PartAPI_v1.newPart({name: "Leg1"});
+part = @PartAPI_v1.newPart({name: "Column"});
 success = @PartAPI_v1.updateExpression({ productId: part, toAddMembers: [
   	{ name: "H", value: height },
    	{ name: "L", value: 50 },
