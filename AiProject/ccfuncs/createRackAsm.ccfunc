@@ -8,10 +8,10 @@ IF !ISVOID(param) THEN
 	dHeight = param.dHeight;
 	nShelves = param.nShelves;
  ELSE
- dLength =2000;
+ dLength =3000;
  dDepth = 800;
  dHeight = 1500;
- nShelves = 3;
+ nShelves = 5;
 ENDIF
 
 cwidth = 50;
@@ -20,17 +20,11 @@ clength = 50;
 
 @CommonAPI.Clear();
 root = @AssemblyAPI_v1.createRootAssembly();
-//column = @AssemblyAPI_v1.loadProduct({ url: "https://raw.githubusercontent.com/dm385/cad-files/refs/heads/main/AiProject/Column1.ofb", format: "ofb"});
-//shelf = @AssemblyAPI_v1.loadProduct({ url: "https://raw.githubusercontent.com/dm385/cad-files/refs/heads/main/AiProject/Shelf1.ofb", format: "ofb"});
+column = @AssemblyAPI_v1.loadProduct({ url: "https://raw.githubusercontent.com/dm385/cad-files/refs/heads/main/AiProject/Column1.ofb", format: "ofb"});
+shelf = @AssemblyAPI_v1.loadProduct({ url: "https://raw.githubusercontent.com/dm385/cad-files/refs/heads/main/AiProject/Shelf1.ofb", format: "ofb"});
 
-
-column = @AssemblyAPI_v1.loadProduct({file: "C://tmp/Column1.ofb"});
 column = column[0];
-
-shelf = @AssemblyAPI_v1.loadProduct({file: "C://tmp/Shelf1.ofb"});
 shelf = shelf[0];
-
-
 
 wcsPrt1 = @PartAPI_v1.getGeometryByName({refId: column, name: "WCS1"} );
 
