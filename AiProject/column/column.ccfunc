@@ -1,5 +1,5 @@
 PAR param, api;
-VAR part, success, box, wcs1, wcs2, b1, b2, wcs3, b3, res, lpb, workAxis,
+VAR part, box, wcs1, wcs2, b1, b2, wcs3, b3, res, lpb, workAxis,
     hole, holeL, holeH, holeCntH, holeCntL, holeAxis1, holeAxis2, holeWcs, mhz, mhx,
     foot, footSize, footHeight, footWcs,
     height, length, depth;
@@ -13,11 +13,6 @@ IF !ISVOID(param.footHeight) THEN footHeight = param.footHeight; ELSE footHeight
 
 @CommonAPI.Clear();
 part = api.part.newPart({ name: "Column" });
-success = @PartAPI_v1.updateExpression({ productId: part, toAddMembers: [
-  { name: "H", value: height },
-  { name: "L", value: length },
-  { name: "T", value: depth }
-]});
 
 wcs1 = @PartAPI_v1.workCSys({ partId: part, name: "WCS1", offset: { 0, 0, footHeight } });
 wcs2 = @PartAPI_v1.workCSys({ partId: part, name: "WCS2", offset: { depth, depth, footHeight } });
