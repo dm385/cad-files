@@ -5,18 +5,18 @@ VAR part, wcs1, b1, b2, b3,b4, b5, wcs2, wcs3, wcs4, dLength, dDepth, res;
 
 IF !ISVOID(param) THEN
   dLength = param.dLength;
-	dDepth = param.dDepth;
- ELSE
+  dDepth = param.dDepth;
+ELSE
   dLength = 1000;
-	dDepth = 250;
+  dDepth = 250;
 ENDIF
 
 part = @PartAPI_v1.newPart({ name: "SimpleShelf" });
 
 @PartAPI_v1.updateExpression({ productId: part, toAddMembers: [
-  	{ name: "L", value: dLength },
-   	{ name: "D", value: dDepth },
-    { name: "T", value: 10 }
+  { name: "L", value: dLength },
+  { name: "D", value: dDepth },
+  { name: "T", value: 10 }
 ]});
 
 wcs1 = @PartAPI_v1.workCSys({ partId: part, name: "WCS1", offset: {0, 0, 0}});

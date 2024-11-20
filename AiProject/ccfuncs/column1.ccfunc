@@ -1,50 +1,51 @@
-PAR param;
-VAR part, success, box, update, wcs1, wcs2, b1, b2, wcs3, b3, wcs4, b4, b5, res, lpb, workAxis, height;
+PAR param, api;
+VAR part, success, box, wcs1, wcs2, b1, b2, wcs3, b3, res, lpb, workAxis,
+    hole, holeL, holeH, holeCntH, holeCntL, holeAxis1, holeAxis2, holeWcs, mhz, mhx,
+    foot, footSize, footHeight, footWcs,
+    height, length, depth;
+
+IF ISVOID(param) THEN param = {}; ENDIF
+IF !ISVOID(param.height) THEN height = param.height; ELSE height = 600; ENDIF
+IF !ISVOID(param.length) THEN length = param.length; ELSE length = 60; ENDIF
+IF !ISVOID(param.depth) THEN depth = param.depth; ELSE depth = 5; ENDIF
+IF !ISVOID(param.footSize) THEN footSize = param.footSize; ELSE footSize = length * 2; ENDIF
+IF !ISVOID(param.footHeight) THEN footHeight = param.footHeight; ELSE footHeight = depth; ENDIF
 
 @CommonAPI.Clear();
-
-IF !ISVOID(param) THEN
-  height = param.height;
- ELSE
-  height =1500;
-ENDIF
-
-
-part = @PartAPI_v1.newPart({name: "Column"});
+part = api.part.newPart({ name: "Column" });
 success = @PartAPI_v1.updateExpression({ productId: part, toAddMembers: [
-  	{ name: "H", value: height },
-   	{ name: "L", value: 50 },
-    { name: "T", value: 5 }
+  { name: "H", value: height },
+  { name: "L", value: length },
+  { name: "T", value: depth }
 ]});
 
+wcs1 = @PartAPI_v1.workCSys({ partId: part, name: "WCS1", offset: { 0, 0, footHeight } });
+wcs2 = @PartAPI_v1.workCSys({ partId: part, name: "WCS2", offset: { depth, depth, footHeight } });
+wcs3 = @PartAPI_v1.workCSys({ partId: part, name: "WCS3", offset: { length / 4, length / 2, footHeight } });
+footWcs = @PartAPI_v1.workCSys({ partId: part, name: "FootWCS", offset: { -(footSize - length) / 2, -(footSize - length) / 2, 0 } });
 
-wcs1 = @PartAPI_v1.workCSys({ partId: part, name: "WCS1", offset: {0, 0, 0}});
-wcs2 = @PartAPI_v1.workCSys({ partId: part, name: "WCS2", offset: "{ExpressionSet.T, ExpressionSet.T, 0}"});
+b1 = @PartAPI_v1.box({ partId: part, references: [wcs1], length: length, height: height, width: length });
+b2 = @PartAPI_v1.box({ partId: part, references: [wcs2], length: length - 2 * depth, height: height, width: length - 2*depth });
+b3 = @PartAPI_v1.box({ partId: part, references: [wcs3], length: length / 2, height: height, width: length * 2 });
+res = @PartAPI_v1.boolean({ partId: part, type: 1, target: { id: b1 }, tools: [{ id: b2 }, { id: b3 }] });
 
-b1 = @PartAPI_v1.box({ partId: part, references: [wcs1], length: "ExpressionSet.L", height: "ExpressionSet.H", width: "ExpressionSet.L" });
-b2 = @PartAPI_v1.box({ partId: part, references: [wcs2], length: "ExpressionSet.L- 2* ExpressionSet.T", height: "ExpressionSet.H", width: "ExpressionSet.L- 2* ExpressionSet.T" });
-  
-wcs3 = @PartAPI_v1.workCSys({ partId: part, name: "WCS3", offset: "{ExpressionSet.L/4, ExpressionSet.L/ 2, 0}"});
-b3 = @PartAPI_v1.box({ partId: part, references: [wcs3], length: "ExpressionSet.L /2", height: "ExpressionSet.H", width: "ExpressionSet.L * 2" });
+mhx = 10;
+mhz = 20;
+holeL = 10;
+holeH = 20;
+holeCntH = div(height, holeH * 2) - 1;
+holeCntL = div(length, holeL * 2) - 1;
+holeWcs = @PartAPI_v1.workCSys({ partId: part, name: "HoleWCS", offset: { mhx, -1, mhz + footHeight }});
+holeAxis1 = @PartAPI_v1.workAxis({ partId: part, direction: { 1, 0, 0 } });
+holeAxis2 = @PartAPI_v1.workAxis({ partId: part, direction: { 0, 0, 1 } });
+hole = @PartAPI_v1.box({ partId: part, references: [holeWcs], length: holeL, height: holeH, width: depth + 2 });
 
-res = @PartAPI_v1.boolean({ partId: part, type: 1, target: { id: b1 }, tools: [{ id: b2 },{id: b3}] });
-
-wcs4 = @PartAPI_v1.workCSys({ partId: part, name: "WCS4", offset: {10, 0, 20}});
-b4 = @PartAPI_v1.box({ partId: part, references: [wcs4], length: 10, height: 20, width: 10 });
-
-lpb = @PartAPI_v1.linearPattern({ partId: part, targets: [{ id: b4 }], references: [26], 
-					firstDirParams: { count: 2, distance: 20, merged: TRUE }, references2: [34],
-					secondDirParams: { count: "div(ExpressionSet.H ,40) -1",  distance: 40}});
-					
+lpb = @PartAPI_v1.linearPattern({
+  partId: part, targets: [{ id: hole }],
+  references: [holeAxis1], firstDirParams: { count: holeCntL, distance: (length - 10) / holeCntL, merged: TRUE },
+  references2: [holeAxis2], secondDirParams: { count: holeCntH, distance: (height - 20) / holeCntH }
+});
 res = @PartAPI_v1.boolean({ partId: part, type: 1, target: { id: res }, tools: [{ id: lpb}] });
 
-
-b5 = @PartAPI_v1.box({ partId: part, length: 100, height: 5, width: 100 });
-
-workAxis = @PartAPI_v1.workAxis({ partId: part, direction: {-1,-1,0} });
-
-b5 = @PartAPI_v1.transformation({ partId: part, type: 0, targets: [{ id: b5 }], references: [workAxis], distanceOrAngle: sqrt(1250) });
-res = @PartAPI_v1.boolean({ partId: part, type: 0, target: { id: res }, tools: [{ id: b5}] });
-
-//@BaseModelerAPI.Save("C:\\tmp\\tmp.ofb");
-RETURN;
+foot = @PartAPI_v1.box({ partId: part, references: [footWcs], length: footSize, height: footHeight, width: footSize });
+res = @PartAPI_v1.boolean({ partId: part, type: 0, target: { id: res }, tools: [{ id: foot}] });
