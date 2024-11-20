@@ -12,7 +12,7 @@ IF !ISVOID(param.footSize) THEN footSize = param.footSize; ELSE footSize = lengt
 IF !ISVOID(param.footHeight) THEN footHeight = param.footHeight; ELSE footHeight = depth; ENDIF
 
 @CommonAPI.Clear();
-part = api.part.newPart({ name: "Column" });
+part = @PartAPI_v1.newPart({ name: "Column" });
 
 wcs1 = @PartAPI_v1.workCSys({ partId: part, name: "WCS1", offset: { 0, 0, footHeight } });
 wcs2 = @PartAPI_v1.workCSys({ partId: part, name: "WCS2", offset: { depth, depth, footHeight } });
