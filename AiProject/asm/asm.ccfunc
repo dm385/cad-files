@@ -71,4 +71,4 @@ fc3 = @AssemblyAPI_v1.fastenedConstraint({
   mate2Ref: { matePath: [shelfInstances[0]], wcsId: wcsPrt2d, reorientType: 2}
 });
 
-RETURN;
+RETURN param;
