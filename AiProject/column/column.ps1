@@ -11,6 +11,4 @@ foreach ($line in $csv) {
     $url = "$api/Developer/Run?clear=1&height=$($line.height)&length=$($line.length)&depth=$($line.depth)"
     curl $url --data-binary "@column.ccfunc" --header "Content-Type: application/octet-stream" -sS
     curl -sS -o "$out/$name.ofb" "$api/Developer/Save?type=ofb" -d ""
-    curl -sS -o "$out/$name.stp" "$api/Developer/Save?type=stp" -d ""
-    curl -sS -o "$out/$name.iwp" "$api/Developer/Save?type=iwp" -d ""
 }

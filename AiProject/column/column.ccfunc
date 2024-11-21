@@ -1,6 +1,6 @@
 PAR param, api;
-VAR part, box, wcs1, wcs2, b1, b2, wcs3, b3, res, lpb, workAxis,
-    hole, holeL, holeH, holeCntH, holeCntL, holeAxis1, holeAxis2, holeWcs, mhz, mhx,
+VAR part, box, wcs0, wcs1, wcs2, b1, b2, wcs3, b3, res, lpb, workAxis,
+    hole, holeL, holeH, holeCntH, holeAxis1, holeAxis2, holeWcs, mhz, mhx,
     foot, footSize, footHeight, footWcs,
     height, length, depth;
 
@@ -13,7 +13,7 @@ IF !ISVOID(param.footHeight) THEN footHeight = param.footHeight; ELSE footHeight
 
 @CommonAPI.Clear();
 part = @PartAPI_v1.newPart({ name: "Column" });
-
+wcs0 = @PartAPI_v1.workCSys({ partId: part, name: "WCS0", offset: { length, 0, footHeight } });
 wcs1 = @PartAPI_v1.workCSys({ partId: part, name: "WCS1", offset: { 0, 0, footHeight } });
 wcs2 = @PartAPI_v1.workCSys({ partId: part, name: "WCS2", offset: { depth, depth, footHeight } });
 wcs3 = @PartAPI_v1.workCSys({ partId: part, name: "WCS3", offset: { length / 4, length / 2, footHeight } });
@@ -26,10 +26,10 @@ res = @PartAPI_v1.boolean({ partId: part, type: 1, target: { id: b1 }, tools: [{
 
 mhx = 10;
 mhz = 20;
-holeL = 10;
-holeH = 20;
+holeL = 15;
+holeH = 30;
+
 holeCntH = div(height, holeH * 2) - 1;
-holeCntL = div(length, holeL * 2) - 1;
 holeWcs = @PartAPI_v1.workCSys({ partId: part, name: "HoleWCS", offset: { mhx, -1, mhz + footHeight }});
 holeAxis1 = @PartAPI_v1.workAxis({ partId: part, direction: { 1, 0, 0 } });
 holeAxis2 = @PartAPI_v1.workAxis({ partId: part, direction: { 0, 0, 1 } });
@@ -37,7 +37,7 @@ hole = @PartAPI_v1.box({ partId: part, references: [holeWcs], length: holeL, hei
 
 lpb = @PartAPI_v1.linearPattern({
   partId: part, targets: [{ id: hole }],
-  references: [holeAxis1], firstDirParams: { count: holeCntL, distance: (length - 10) / holeCntL, merged: TRUE },
+  references: [holeAxis1], firstDirParams: { count: 2, distance: length - 2*mhx  -holeL, merged: TRUE },
   references2: [holeAxis2], secondDirParams: { count: holeCntH, distance: (height - 20) / holeCntH }
 });
 res = @PartAPI_v1.boolean({ partId: part, type: 1, target: { id: res }, tools: [{ id: lpb}] });

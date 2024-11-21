@@ -1,0 +1,33 @@
+PAR param, api;
+VAR part, wcs1, wcs2,  wcs3, wcs4, wcsl, wcsld, wcsd, b1, b2, b3, b4, b5,
+    height, length, depth, ft;
+
+IF ISVOID(param) THEN param = {}; ENDIF
+IF !ISVOID(param.length) THEN length = param.length; ELSE length = 1000; ENDIF
+IF !ISVOID(param.depth) THEN depth = param.depth; ELSE depth = 250; ENDIF
+IF !ISVOID(param.ft) THEN ft = param.ft; ELSE ft = 5; ENDIF
+
+@CommonAPI.Clear();
+part = @PartAPI_v1.newPart({ name: "Shelf" });
+
+
+wcsl = @PartAPI_v1.workCSys({ partId: part, name: "WCSL", offset: {length, 0, 0}});
+wcsld = @PartAPI_v1.workCSys({ partId: part, name: "WCSLD", offset: {length, depth, 0}});
+wcsd = @PartAPI_v1.workCSys({ partId: part, name: "WCSD", offset: {0, depth, 0}});
+
+wcs1 = @PartAPI_v1.workCSys({ partId: part, name: "WCS1", offset: {0, 0, 0}});
+b1 = @PartAPI_v1.box({ partId: part, references: [wcs1], length: length, height: 2*ft, width: ft });
+b2 = @PartAPI_v1.box({ partId: part, references: [wcs1], length: ft , height: 2*ft, width: depth });
+
+wcs2 = @PartAPI_v1.workCSys({ partId: part, name: "WCS2", offset: {length - ft, 0, 0}});
+b3 = @PartAPI_v1.box({ partId: part, references: [wcs2], length: ft , height: 2*ft, width: depth });
+
+wcs3  = @PartAPI_v1.workCSys({ partId: part, name: "WCS3", offset: {0, depth - ft, 0}});
+b4 = @PartAPI_v1.box({ partId: part, references: [wcs3], length: length, height: 2*ft, width: ft });
+
+@PartAPI_v1.boolean({ partId: part, type: 0, target: { id: b1 }, tools: [{ id: b2},{ id: b3},{ id: b4}] });
+
+wcs4 = @PartAPI_v1.workCSys({ partId: part, name: "WCS4", offset: {ft, ft, ft}});
+b5 = @PartAPI_v1.box({ partId: part, references: [wcs4], length: length - 2*ft, height: ft, width: depth - 2*ft});
+
+RETURN;

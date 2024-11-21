@@ -1,0 +1,10 @@
+id,height,nShelves,col_file,shelf_file
+1,1500,2,column/1500-60-5.ofb,shelf/1000-600.ofb
+2,1500,3,column/1500-60-5.ofb,shelf/1500-650.ofb
+3,1750,3,column/1750-60-5.ofb,shelf/2000-600.ofb
+4,2500,5,column/2500-80-10.ofb,shelf/2500-800.ofb
+5,3500,5,column/3500-80-10.ofb,shelf/2500-800.ofb
+6,3500,3,column/3500-80-10.ofb,shelf/2800-900.ofb
+6,3500,5,column/3500-80-10.ofb,shelf/2800-900.ofb
+8,3500,7,column/3500-80-10.ofb,shelf/2800-900.ofb
+
