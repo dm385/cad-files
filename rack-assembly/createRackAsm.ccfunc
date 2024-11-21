@@ -13,7 +13,7 @@ plate = @AssemblyAPI_v1.createPartAsTemplate();
 
 //column = @AssemblyAPI_v1.loadProduct({file: "C://tmp/Leg1.ofb"});
 
-column = @AssemblyAPI_v1.loadProduct({ url: "https://raw.githubusercontent.com/dm385/cad-files/refs/heads/main/AiProject/Column1.ofb""});
+column = @AssemblyAPI_v1.loadProduct({ url: "https://raw.githubusercontent.com/dm385/cad-files/refs/heads/main/ai-project/Column1.ofb""});
 
 wcsPrt2 = @PartAPI_v1.getGeometryByName({refId: shelfId, name: "WcsOrigin"});
 
