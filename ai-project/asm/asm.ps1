@@ -25,4 +25,9 @@ foreach ($line in $csv) {
     $option = [URI]::EscapeDataString("{`"asPart`": 1, `"useAsciiFile`": 0 }")
     curl -sS "$api/BaseModeler_v1/save?file=$file&option=$option" -d ""
     Write-Host ""
+
+    # Save step
+    $file = [URI]::EscapeDataString("$outDir/$name.stp")
+    curl -sS "$api/BaseModeler_v1/save?file=$file" -d ""
+    Write-Host ""
 }
