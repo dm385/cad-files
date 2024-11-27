@@ -1,5 +1,11 @@
+.classcad*
+classcad-cli.cmd
+
+classcad/
 logs/
 data/
 .vscode/
-classcad-cli.cmd
+
+**/out/**
 **/.out/**
+**/.temp/**
