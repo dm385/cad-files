@@ -39,11 +39,10 @@ with open(csvpath, newline="") as csvfile:
 
             # Save iwp
             file = f"{outDir}/{name}_binary.iwp"
-            option = "{\"asPart\": 1, \"useAsciiFile\": 0 }"
-            url = f"{api}/BaseModeler_v1/save?file={file}&option={option}"
+            iwp = "{\"binary\": 0 }"
+            url = f"{api}/BaseModeler_v1/save?file={file}&iwp={iwp}"
             try:
                 req = session.post(url)
             except:
                 print("An exception has occurred!")
                 continue
-
