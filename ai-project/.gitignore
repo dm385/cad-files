@@ -1,0 +1,8 @@
+.classcad*
+
+classcad/
+logs/
+out/
+.out/
+.temp/
+.venv/

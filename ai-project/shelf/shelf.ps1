@@ -17,4 +17,10 @@ foreach ($line in $csv) {
     $file = [URI]::EscapeDataString("$outDir/$name.ofb")
     curl -sS "$api/BaseModeler_v1/save?file=$file" -d ""
     Write-Host ""
+
+    # Save iwp
+    $file = [URI]::EscapeDataString("$($outDir)/$($name)_binary.iwp")
+    $iwp = [URI]::EscapeDataString("{`"binary`": 0 }")
+    curl -sS "$api/BaseModeler_v1/save?file=$file&iwp=$iwp" -d ""
+    Write-Host ""
 }
