@@ -69,10 +69,10 @@ VAR families,fam, typeWidth, typeHeight, ASG50,element, key, result, part, asm, 
 PROC readType
 PAR param;
 VAR dataStr;
-//dataStr = "https:/raw.githubusercontent.com/dm385/cad-files/refs/heads/main/ptblink/Capral/profiles/" + param + ".json";
-//json = @api.v1.utils.parseJson({ url:  dataStr, format: "JSON"});
-dataStr = "C:\\tmp\\allProfilesJSON\\" + param + ".json";
-json = @api.v1.utils.parseJson({ file:  dataStr, format: "JSON"});
+dataStr = "https:/raw.githubusercontent.com/dm385/cad-files/refs/heads/main/ptblink/Capral/profiles/" + param + ".json";
+json = @api.v1.utils.parseJson({ url:  dataStr, format: "JSON"});
+//dataStr = "C:\\tmp\\allProfilesJSON\\" + param + ".json";
+//json = @api.v1.utils.parseJson({ file:  dataStr, format: "JSON"});
 RETURN json.result;
 ENDPROC
 
@@ -401,10 +401,10 @@ VAR part, ENEP, res, sf, shape, pline,solid;
 PROC readType
 PAR param;
 VAR json, dataStr;
-//dataStr = "https:/raw.githubusercontent.com/dm385/cad-files/refs/heads/main/ptblink/Capral/profiles/" + param + ".json";
-//json = @api.v1.utils.parseJson({ url:  dataStr, format: "JSON"});
-dataStr = "C:\\tmp\\allProfilesJSON\\" + param + ".json";
-json = @api.v1.utils.parseJson({ file:  dataStr, format: "JSON"});
+dataStr = "https:/raw.githubusercontent.com/dm385/cad-files/refs/heads/main/ptblink/Capral/profiles/" + param + ".json";
+json = @api.v1.utils.parseJson({ url:  dataStr, format: "JSON"});
+//dataStr = "C:\\tmp\\allProfilesJSON\\" + param + ".json";
+//json = @api.v1.utils.parseJson({ file:  dataStr, format: "JSON"});
 RETURN json.result;
 ENDPROC
 
@@ -435,10 +435,10 @@ VAR families,fam, typeWidth, typeHeight, ASG50,element, key, result, part, asm, 
 PROC readType
 PAR param;
 VAR dataStr;
-//dataStr = "https:/raw.githubusercontent.com/dm385/cad-files/refs/heads/main/ptblink/Capral/profiles/" + param + ".json";
-//json = @api.v1.utils.parseJson({ url:  dataStr, format: "JSON"});
-dataStr = "C:\\tmp\\allProfilesJSON\\" + param + ".json";
-json = @api.v1.utils.parseJson({ file:  dataStr, format: "JSON"});
+dataStr = "https:/raw.githubusercontent.com/dm385/cad-files/refs/heads/main/ptblink/Capral/profiles/" + param + ".json";
+json = @api.v1.utils.parseJson({ url:  dataStr, format: "JSON"});
+//dataStr = "C:\\tmp\\allProfilesJSON\\" + param + ".json";
+//json = @api.v1.utils.parseJson({ file:  dataStr, format: "JSON"});
 RETURN json.result;
 ENDPROC
 
