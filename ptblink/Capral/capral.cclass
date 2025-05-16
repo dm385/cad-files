@@ -1,0 +1,662 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<class name="capral">
+  <objectInfo flags="0">
+    <coordinateSystem>
+      <point x="0" y="0" z="0" />
+      <vector x="1" y="0" z="0" />
+      <vector x="0" y="1" z="0" />
+      <vector x="0" y="0" z="1" />
+    </coordinateSystem>
+  </objectInfo>
+  <members>
+    <code name="ASG50WindowASM">
+      <memberInfo visible="0" />
+      <![CDATA[
+PAR params;
+VAR asm, str, width,  height,res;
+
+width = params.width;
+height = params.height;
+
+str = "Window_" + width + "_" + height;
+ 
+res = createCapralWindowParts({ width: width, height: height});
+@api.v1.common.clear();
+asm = @api.v1.assembly.create({name: str});
+asm = asm.result; 
+@api.v1.assembly.loadProduct({ data: res.content, format: "OFB" });
+
+createCapralWindowAssembly({ asm: asm});
+
+
+
+
+RETURN;
+]]>
+    </code>
+    <code name="ASG50Narrowline">
+      <memberInfo visible="0" />
+      <![CDATA[
+PAR params;
+VAR asm, str, size, width, width1, height,height1,res;
+
+size = params.family;
+width = params.width;
+width1 = params.width1;
+height = params.height;
+height1 = params.height1;
+str = "Frame_" + width + "_" + width1 + "_" + height + "_" + height1;
+ 
+res = createCapralFrameParts({ family: size, width: width, width1: width1, height: height, height1: height1});
+
+@api.v1.common.clear();
+asm = @api.v1.assembly.create({name: str});
+asm = asm.result; 
+@api.v1.assembly.loadProduct({ data: res.content, format: "OFB" });
+
+createCapralFrameAssembly({ asm: asm});
+
+
+RETURN;
+]]>
+    </code>
+    <code name="createCapralFrameParts">
+      <memberInfo visible="0" />
+      <![CDATA[
+PAR params;
+VAR families,fam, typeWidth, typeHeight, ASG50,element, key, result, part, asm, str,json, ENEP, sf, pline, solid,shape, res, height, height1, width, width1;
+
+PROC readType
+PAR param;
+VAR dataStr;
+//dataStr = "https:/raw.githubusercontent.com/dm385/cad-files/refs/heads/main/ptblink/Capral/profiles/" + param + ".json";
+//json = @api.v1.utils.parseJson({ url:  dataStr, format: "JSON"});
+dataStr = "C:\\tmp\\allProfilesJSON\\" + param + ".json";
+json = @api.v1.utils.parseJson({ file:  dataStr, format: "JSON"});
+RETURN json.result;
+ENDPROC
+
+PROC coordsys
+PAR l;
+VAR fw,fd, flip;
+fw = ENEP.width;	fd = ENEP.length;	flip = ENEP.csysType;
+SWITCH flip 
+ CASE 0:
+	@api.v1.part.workCSys({ id: part, name: "o1", offset: {0, 0, 0}});
+	@api.v1.part.workCSys({ id: part, name: "o2", offset: {fd, 0, 0}});
+	@api.v1.part.workCSys({ id: part, name: "o3", offset: {fd, -fw, 0}});
+	@api.v1.part.workCSys({ id: part, name: "o4", offset: {0, -fw,0}});
+	@api.v1.part.workCSys({ id: part, name: "m1", offset: {fd/2, -fw,l/2}});
+	@api.v1.part.workCSys({ id: part, name: "t1", offset: {0, 0, l}});
+	@api.v1.part.workCSys({ id: part, name: "t2", offset: {fd, 0, l}});
+	@api.v1.part.workCSys({ id: part, name: "t3", offset: {fd, -fw, l}});
+	@api.v1.part.workCSys({ id: part, name: "t4", offset: {0, -fw, l}});
+ CASE 1:
+	@api.v1.part.workCSys({ id: part, name: "o1", offset: {fd, 0, 0}, rotation: [0,0,C:PI]});
+	@api.v1.part.workCSys({ id: part, name: "o2", offset: {0, 0, 0}, rotation: [0,0,C:PI]});
+	@api.v1.part.workCSys({ id: part, name: "o3", offset: {0, fw, 0}, rotation: [0,0,C:PI]});
+	@api.v1.part.workCSys({ id: part, name: "o4", offset: {fd, fw,0}, rotation: [0,0,C:PI]});
+	@api.v1.part.workCSys({ id: part, name: "m1", offset: {fd/2, fw,l/2}, rotation: [0,0,C:PI]});
+	@api.v1.part.workCSys({ id: part, name: "t1", offset: {fd, 0, l}, rotation: [0,0,C:PI]});
+	@api.v1.part.workCSys({ id: part, name: "t2", offset: {0, 0, l}, rotation: [0,0,C:PI]});
+	@api.v1.part.workCSys({ id: part, name: "t3", offset: {0, fw, l}, rotation: [0,0,C:PI]});
+	@api.v1.part.workCSys({ id: part, name: "t4", offset: {fd, fw, l}, rotation: [0,0,C:PI]});
+ CASE 2:
+  @api.v1.part.workCSys({ id: part, name: "o1", offset: {0, fw, 0}});
+	@api.v1.part.workCSys({ id: part, name: "o2", offset: {fd, fw, 0}});
+	@api.v1.part.workCSys({ id: part, name: "o3", offset: {fd, 0, 0}});
+	@api.v1.part.workCSys({ id: part, name: "o4", offset: {0, 0,0}});
+	@api.v1.part.workCSys({ id: part, name: "m1", offset: {fd/2, 0,l/2}});
+	@api.v1.part.workCSys({ id: part, name: "t1", offset: {0, fw, l}});
+	@api.v1.part.workCSys({ id: part, name: "t2", offset: {fd, fw, l}});
+	@api.v1.part.workCSys({ id: part, name: "t3", offset: {fd, 0, l}});
+	@api.v1.part.workCSys({ id: part, name: "t4", offset: {0, 0, l}});
+ CASE 3:
+  @api.v1.part.workCSys({ id: part, name: "m1", offset: {fd, fw, l/2}}); 
+	
+ CASE 4:
+  @api.v1.part.workCSys({ id: part, name: "o1", offset: {fd, fw, 0}}); 
+  @api.v1.part.workCSys({ id: part, name: "t1", offset: {fd, fw, l}}); 
+  @api.v1.part.workCSys({ id: part, name: "m1", offset: {-47.13, -12.86, l/2}}); 
+	
+ ENDSWITCH 
+ENDPROC
+
+PROC genPart
+	PAR name, length;
+	VAR wg, box, box1;
+ 	//res = @api.v1.part.create({ name: params.name });
+	res = @api.v1.assembly.partTemplate({ name: name });
+	part = res.result;
+	sf= @api.v1.part.entityInjection({ id: part, name: "MyENEP"});
+	sf= sf.result;
+	shape = @api.v1.curve.shape({id: sf});
+	shape = shape.result;
+	FORALL  ENEP.pLines pline DO
+		res = @api.v1.curve.polyline2d({id: shape, points: pline.points, bulges: pline.bulges, close: pline.close});
+	NEXT
+	solid =  @api.v1.solid.extrusion({id: sf, curves: shape , direction: {0,0,length} });
+	@api.v1.curve.deleteShape({ ids: [shape] });
+	solid = solid.result;
+	coordsys(length);
+	
+	SWITCH name 
+ 		CASE "SashAdaptor_2":
+ 			box = @api.v1.part.box({id: part, lenght: 100, width: 100, height: typeHeight + 20});
+ 			res = @api.v1.part.box({id: part, lenght: 100, width: 100, height: typeHeight + 20});
+ 			res= res.result;
+ 			wg = @api.v1.part.getWorkGeometry({ id: part, name: "ZAxis" });
+ 			box1 = @api.v1.part.translation({id: part, targets: [ res], references: [ wg.result], distance: length - typeHeight -20});
+ 			@api.v1.part.boolean({ id: part, type: "SUBTRACTION",  target: {id: sf}, tools: [{ id: box.result }, {id: box1.result}]});
+ 		
+ 		CASE "SashAdaptor_3":
+	 		box = @api.v1.part.box({id: part, lenght: 100, width: 100, height:  20});
+	 		res = @api.v1.part.box({id: part, lenght: 100, width: 100, height:  typeHeight + 20});
+ 			res= res.result;
+ 			wg = @api.v1.part.getWorkGeometry({ id: part, name: "ZAxis" });
+ 			box1 = @api.v1.part.translation({id: part, targets: [{id: res}], references: [ wg.result], distance: length  - 20 - typeHeight});
+ 			@api.v1.part.boolean({ id: part, type: "SUBTRACTION",  target:  {id: sf}, tools: [{ id: box.result }, {id: box1.result}]});
+	 ENDSWITCH;
+ENDPROC
+
+@api.v1.common.clear();
+width = params.width;
+width1 = params.width1;
+height = params.height;
+height1 = params.height1;
+str = "Frame_" + width + "_" + width1 + "_" + height + "_" + height1;
+asm = @api.v1.assembly.create({name: str});
+asm = asm.result; 
+//asm = params.asm;
+
+SWITCH params.family
+	CASE 300: element = {"name": 300, "height": 44, "width": 101.6, "frame": "EN5010", "subSill": "EP5693",
+									 "transom": "EN5021", "hinge": "EP5132", "sashAdaptor": "EU9835",    "bead": "EN5032"
+							};
+	CASE 425: element = {"name": 425, "height": 50, "width": 101.6, "frame": "EP7662", "subSill": "EP5693",
+								 "transom": "EP7663", "hinge": "EP5132", "sashAdaptor": "EP8094","bead": "EN5032"
+							};
+ENDSWITCH
+
+typeWidth= element.width; // width = 101.6;
+typeHeight = element.height; //= 44; 
+
+
+ENEP = readType(element.frame);  //frame EN5010, EP7662
+genPart("NL_Frame_0", width1 - 2 * typeHeight);
+genPart("NL_Frame_1", width - width1 - typeHeight);
+genPart("NL_Frame_2", height1);
+genPart("NL_Frame_3", height - height1);
+
+ENEP = readType(element.subSill);
+genPart("SubSill", width);
+
+ENEP = readType(element.sashAdaptor);	
+genPart("SashAdaptor_0", width1 - 2 * typeHeight);
+genPart("SashAdaptor_1", width - width1 - typeHeight);
+genPart("SashAdaptor_2", height1);
+genPart("SashAdaptor_3", height - height1);
+
+ENEP = readType(element.transom);	//"EN5021"
+genPart("Transom_0", width1 - 2 * typeHeight);
+genPart("Transom_1", width - width1 - typeHeight);
+genPart("Transom_2", height1);
+genPart("Transom_3", height - height1);
+
+ENEP = readType(element.bead);	
+genPart("Bead_0", width1 - 2 * typeHeight);
+genPart("Bead_1", width - width1 - typeHeight);
+genPart("Bead_2", height1);
+genPart("Bead_3", height - height1);
+
+ENEP = readType(element.hinge);	
+genPart("Hinge_0", width1 - 2 * typeHeight);
+genPart("Hinge_1", width - width1 - typeHeight);
+
+
+res = @api.v1.common.save({ format: "ofb" });
+RETURN  res.result;
+]]>
+    </code>
+    <code name="createCapralFrameAssembly">
+      <memberInfo visible="0" />
+      <![CDATA[
+PAR params;
+VAR parts,part, transform, asm, res, fd, fw, csys, csys1,instance, name, i, definitions, str, kv;
+
+PROC genfastendContraint
+PAR prod, n, i1, c1, r, a;
+VAR p, p1;
+kv[i1]= prod;
+i1 = @api.v1.assembly.getInstance({ ownerId: asm, name: i1 });
+i1 = i1.result;	
+c1 = @api.v1.part.getWorkGeometry({ id: prod, name: c1 });
+c1 = c1.result;
+@api.v1.assembly.fastenedOrigin({ id: asm, name: n, mate1: { matePath: [i1], wcsId: c1,  flipType: r, reorientType: a}});
+
+ENDPROC
+PROC genContraint
+PAR prod, n, i1, c1, i2, c2, r, a;
+VAR p, p1;
+kv[i2]= prod;
+p = kv[i1];	
+i1 = @api.v1.assembly.getInstance({ ownerId: asm, name: i1 });
+i1 = i1.result;
+c1 = @api.v1.part.getWorkGeometry({ id: p, name: c1 });
+c1 = c1.result;
+p1 = kv[i2];	
+i2 =  @api.v1.assembly.getInstance({ ownerId: asm, name: i2 });
+i2 = i2.result;	
+c2 = @api.v1.part.getWorkGeometry({ id: p1, name: c2 });
+c2 = c2.result;
+@api.v1.assembly.fastened({ id: asm, name: n, mate1: { matePath: [i1], wcsId: c1 }, mate2: { matePath: [i2], wcsId: c2, flipType: r, reorientType: a}});
+
+ENDPROC
+
+
+asm = params.asm;
+kv = {};
+//db
+res = @api.v1.assembly.getPartTemplate({ name: "NL_Frame_2" });
+res = res.result;
+@api.v1.assembly.instance({ productId: res, ownerId: asm, name: "NL_Frame_2_i0"});
+genfastendContraint(res, "FO_o1_z270", "NL_Frame_2_i0", "o1", "Z", "270");
+
+res = @api.v1.assembly.getPartTemplate({ name: "Transom_3" });
+res = res.result;
+@api.v1.assembly.instance({ productId: res, ownerId: asm, name: "Transom_3"});
+genContraint(res, "F_t1_o3_z180", "NL_Frame_2_i0", "t1", "Transom_3", "o3", "Z", "180");
+
+res = @api.v1.assembly.getPartTemplate({ name: "NL_Frame_0" });
+res = res.result;
+@api.v1.assembly.instance({ productId: res, ownerId: asm, name: "NL_Frame_0_i0"});
+genContraint(res, "F_o4_o2_ny180", "NL_Frame_2_i0", "o4", "NL_Frame_0_i0", "o2", "-Y", "180");
+@api.v1.assembly.instance({ productId: res, ownerId: asm, name: "NL_Frame_0_i1"});
+genContraint(res, "F_t2_o3_ny0", "Transom_3", "t2", "NL_Frame_0_i1", "o3", "-Y", "0");
+
+res = @api.v1.assembly.getPartTemplate({ name: "Transom_0" });
+res = res.result;
+@api.v1.assembly.instance({ productId: res, ownerId: asm, name: "Transom_0"});
+genContraint(res, "F_t4_t3_y180", "NL_Frame_2_i0", "t4", "Transom_0", "t2", "Y", "180");
+
+res = @api.v1.assembly.getPartTemplate({ name: "Transom_2" });
+res = res.result;
+@api.v1.assembly.instance({ productId: res, ownerId: asm, name: "Transom_2"});
+genContraint(res, "F_t2_t3_y0", "NL_Frame_0_i0", "t2", "Transom_2", "o3", "Y", "0");
+
+res = @api.v1.assembly.getPartTemplate({ name: "NL_Frame_3" });
+res = res.result;
+@api.v1.assembly.instance({ productId: res, ownerId: asm, name: "NL_Frame_3_i0"});
+genContraint(res, "F_t3_o1_z180", "Transom_2", "t3", "NL_Frame_3_i0", "o1", "Z", "180");
+
+
+res = @api.v1.assembly.getPartTemplate({ name: "Transom_1" });
+res = res.result;
+@api.v1.assembly.instance({ productId: res, ownerId: asm, name: "Transom_1"});
+genContraint(res, "F_o2_t3_y0", "Transom_2", "o2", "Transom_1", "t3", "Y", "0");
+
+res = @api.v1.assembly.getPartTemplate({ name: "NL_Frame_1" });
+res = res.result;
+@api.v1.assembly.instance({ productId: res, ownerId: asm, name: "NL_Frame_1_i0"});
+genContraint(res, "F_t2_t3__y0", "Transom_2", "t2", "NL_Frame_1_i0", "t4", "-Y", "180");
+@api.v1.assembly.instance({ productId: res, ownerId: asm, name: "NL_Frame_1_i1"});
+genContraint(res, "F_t4_o1_y0", "NL_Frame_3_i0", "t4", "NL_Frame_1_i1", "o1", "Y", "0");
+
+
+res = @api.v1.assembly.getPartTemplate({ name: "NL_Frame_2" });
+res = res.result;
+@api.v1.assembly.instance({ productId: res, ownerId: asm, name: "NL_Frame_2_i1"});
+genContraint(res,"F_o3_t3_y180", "Transom_1", "o3", "NL_Frame_2_i1", "o1", "Y", "180");
+
+res = @api.v1.assembly.getPartTemplate({ name: "NL_Frame_3" });
+res = res.result;
+@api.v1.assembly.instance({ productId: res, ownerId: asm, name: "NL_Frame_3_i1"});
+genContraint(res, "F_t1_o3_z0", "NL_Frame_2_i1", "t1", "NL_Frame_3_i1", "o3", "Z", "180");
+
+//base
+res = @api.v1.assembly.getPartTemplate({ name: "SubSill" });
+res = res.result;
+@api.v1.assembly.instance({ productId: res, ownerId: asm, name: "SubSill"});
+genContraint(res, "F_o1_o1_y0", "NL_Frame_2_i0", "o1", "SubSill", "o1", "Y", "0");
+
+
+res = @api.v1.assembly.getPartTemplate({ name: "SashAdaptor_0" });
+res = res.result;
+@api.v1.assembly.instance({ productId: res, ownerId: asm, name: "SashAdaptor_0_01"});
+genContraint(res, "F_m1_m1_z180", "NL_Frame_0_i0", "m1", "SashAdaptor_0_01", "m1", "Z", "180");
+@api.v1.assembly.instance({ productId: res, ownerId: asm, name: "SashAdaptor_0_02"});
+genContraint(res,"F_m1_m1__z180", "Transom_0", "m1", "SashAdaptor_0_02", "m1", "Z", "180");
+res = @api.v1.assembly.getPartTemplate({ name: "SashAdaptor_1" });
+res = res.result;
+@api.v1.assembly.instance({ productId: res, ownerId: asm, name: "SashAdaptor_1_01"});
+genContraint(res, "F_m1_m1__z180", "NL_Frame_1_i0", "m1", "SashAdaptor_1_01", "m1", "Z", "180");
+@api.v1.assembly.instance({ productId: res, ownerId: asm, name: "SashAdaptor_1_02"});
+genContraint(res, "F_m1_m1___z180", "NL_Frame_1_i1", "m1", "SashAdaptor_1_02", "m1", "Z", "180");
+
+
+
+
+res = @api.v1.assembly.getPartTemplate({ name: "SashAdaptor_2" });
+res = res.result;
+@api.v1.assembly.instance({ productId: res, ownerId: asm, name: "SashAdaptor_2_01"});
+genContraint(res, "F_m1_m1_z180", "NL_Frame_2_i0", "m1", "SashAdaptor_2_01", "m1", "-Z", "0");
+@api.v1.assembly.instance({ productId: res, ownerId: asm, name: "SashAdaptor_2_02"});
+genContraint(res, "F_m1_m1__z180", "Transom_2", "m1", "SashAdaptor_2_02", "m1", "Z", "180");
+res = @api.v1.assembly.getPartTemplate({ name: "SashAdaptor_3" });
+res = res.result;
+@api.v1.assembly.instance({ productId: res, ownerId: asm, name: "SashAdaptor_3_01"});
+genContraint(res, "F_m1_m1__z180", "NL_Frame_3_i0", "m1", "SashAdaptor_3_01", "m1", "Z", "180");
+@api.v1.assembly.instance({ productId: res, ownerId: asm, name: "SashAdaptor_3_02"});
+genContraint(res, "F_m1_m1___z180", "NL_Frame_3_i1", "m1", "SashAdaptor_3_02", "m1", "-Z", "0");
+
+
+res = @api.v1.assembly.getPartTemplate({ name: "Hinge_0" });
+res = res.result;
+@api.v1.assembly.instance({ productId: res, ownerId: asm, name: "Hinge_0"});
+genContraint(res, "F_t3_o1_nz180", "Transom_0", "t3", "Hinge_0", "o1", "-Z", "180");
+
+res = @api.v1.assembly.getPartTemplate({ name: "Hinge_1" });
+res = res.result;
+@api.v1.assembly.instance({ productId: res, ownerId: asm, name: "Hinge_1"});
+genContraint(res, "F_o4_o1_z0", "NL_Frame_1_i1", "o4", "Hinge_1", "o1", "Z", "0");
+
+
+
+res = @api.v1.assembly.getPartTemplate({ name: "Bead_0" });
+res = res.result;
+@api.v1.assembly.instance({ productId: res, ownerId: asm, name: "Bead_0"});
+genContraint(res, "F_t1_o1_z0", "Transom_0", "t1", "Bead_0", "t1", "Z", "0");
+
+res = @api.v1.assembly.getPartTemplate({ name: "Bead_1" });
+res = res.result;
+@api.v1.assembly.instance({ productId: res, ownerId: asm, name: "Bead_1"});
+genContraint(res, "F_t1_o1_z0", "Transom_1", "o1", "Bead_1", "o1", "Z", "0");
+
+
+res = @api.v1.assembly.getPartTemplate({ name: "Bead_2" });
+res = res.result;
+@api.v1.assembly.instance({ productId: res, ownerId: asm, name: "Bead_2"});
+genContraint(res, "F_t1_o1_z0", "Transom_2", "o1", "Bead_2", "o1", "Z", "0");
+
+
+res = @api.v1.assembly.getPartTemplate({ name: "Bead_3" });
+res = res.result;
+@api.v1.assembly.instance({ productId: res, ownerId: asm, name: "Bead_3"});
+genContraint(res, "F_t1_o1_z0", "Transom_3", "o1", "Bead_3", "o1", "Z", "0");
+
+
+
+
+
+RETURN asm;
+]]>
+    </code>
+    <code name="generatePart">
+      <memberInfo visible="0" />
+      <![CDATA[
+PAR params;
+VAR part, ENEP, res, sf, shape, pline,solid;
+
+
+PROC readType
+PAR param;
+VAR json, dataStr;
+//dataStr = "https:/raw.githubusercontent.com/dm385/cad-files/refs/heads/main/ptblink/Capral/profiles/" + param + ".json";
+//json = @api.v1.utils.parseJson({ url:  dataStr, format: "JSON"});
+dataStr = "C:\\tmp\\allProfilesJSON\\" + param + ".json";
+json = @api.v1.utils.parseJson({ file:  dataStr, format: "JSON"});
+RETURN json.result;
+ENDPROC
+
+  	@api.v1.common.clear();
+ 	ENEP = readType(params.name);	
+ 	res = @api.v1.part.create({ name: params.name });
+	part = res.result;
+	sf= @api.v1.part.entityInjection({ id: part, name: "MyENEP"});
+	sf= sf.result;
+	shape = @api.v1.curve.shape({id: sf});
+	shape = shape.result;
+	FORALL  ENEP.pLines pline DO
+		res = @api.v1.curve.polyline2d({id: shape, points: pline.points, bulges: pline.bulges, close: pline.close});
+	NEXT
+	solid =  @api.v1.solid.extrusion({id: sf, curves: shape , direction: {0,0,params.length} });
+	//@api.v1.curve.deleteShape({ ids: [shape] });
+	solid = solid.result;
+	
+RETURN;
+]]>
+    </code>
+    <code name="createCapralWindowParts">
+      <memberInfo visible="0" />
+      <![CDATA[
+PAR params;
+VAR families,fam, typeWidth, typeHeight, ASG50,element, key, result, part, asm, str,json, ENEP, sf, pline, solid,shape, feature, res, height, height1, width, width1;
+
+PROC readType
+PAR param;
+VAR dataStr;
+//dataStr = "https:/raw.githubusercontent.com/dm385/cad-files/refs/heads/main/ptblink/Capral/profiles/" + param + ".json";
+//json = @api.v1.utils.parseJson({ url:  dataStr, format: "JSON"});
+dataStr = "C:\\tmp\\allProfilesJSON\\" + param + ".json";
+json = @api.v1.utils.parseJson({ file:  dataStr, format: "JSON"});
+RETURN json.result;
+ENDPROC
+
+PROC coordsys
+PAR l;
+VAR fw,fd, flip;
+fw = ENEP.width;	fd = ENEP.length;	flip = ENEP.csysType;
+SWITCH flip 
+ CASE 0:
+	@api.v1.part.workCSys({ id: part, name: "o1", offset: {0, 0, 0}});
+	@api.v1.part.workCSys({ id: part, name: "o2", offset: {fd, 0, 0}});
+	@api.v1.part.workCSys({ id: part, name: "o3", offset: {fd, -fw, 0}});
+	@api.v1.part.workCSys({ id: part, name: "o4", offset: {0, -fw,0}});
+	@api.v1.part.workCSys({ id: part, name: "m1", offset: {fd/2, -fw,l/2}});
+	@api.v1.part.workCSys({ id: part, name: "t1", offset: {0, 0, l}});
+	@api.v1.part.workCSys({ id: part, name: "t2", offset: {fd, 0, l}});
+	@api.v1.part.workCSys({ id: part, name: "t3", offset: {fd, -fw, l}});
+	@api.v1.part.workCSys({ id: part, name: "t4", offset: {0, -fw, l}});
+ CASE 1:
+	@api.v1.part.workCSys({ id: part, name: "o1", offset: {fd, 0, 0}, rotation: [0,0,C:PI]});
+	@api.v1.part.workCSys({ id: part, name: "o2", offset: {0, 0, 0}, rotation: [0,0,C:PI]});
+	@api.v1.part.workCSys({ id: part, name: "o3", offset: {0, fw, 0}, rotation: [0,0,C:PI]});
+	@api.v1.part.workCSys({ id: part, name: "o4", offset: {fd, fw,0}, rotation: [0,0,C:PI]});
+	@api.v1.part.workCSys({ id: part, name: "m1", offset: {fd/2, fw,l/2}, rotation: [0,0,C:PI]});
+	@api.v1.part.workCSys({ id: part, name: "t1", offset: {fd, 0, l}, rotation: [0,0,C:PI]});
+	@api.v1.part.workCSys({ id: part, name: "t2", offset: {0, 0, l}, rotation: [0,0,C:PI]});
+	@api.v1.part.workCSys({ id: part, name: "t3", offset: {0, fw, l}, rotation: [0,0,C:PI]});
+	@api.v1.part.workCSys({ id: part, name: "t4", offset: {fd, fw, l}, rotation: [0,0,C:PI]});
+ CASE 2:
+  @api.v1.part.workCSys({ id: part, name: "o1", offset: {0, fw, 0}});
+	@api.v1.part.workCSys({ id: part, name: "o2", offset: {fd, fw, 0}});
+	@api.v1.part.workCSys({ id: part, name: "o3", offset: {fd, 0, 0}});
+	@api.v1.part.workCSys({ id: part, name: "o4", offset: {0, 0,0}});
+	@api.v1.part.workCSys({ id: part, name: "m1", offset: {fd/2, 0,l/2}});
+	@api.v1.part.workCSys({ id: part, name: "t1", offset: {0, fw, l}});
+	@api.v1.part.workCSys({ id: part, name: "t2", offset: {fd, fw, l}});
+	@api.v1.part.workCSys({ id: part, name: "t3", offset: {fd, 0, l}});
+	@api.v1.part.workCSys({ id: part, name: "t4", offset: {0, 0, l}});
+ CASE 3:
+  @api.v1.part.workCSys({ id: part, name: "m1", offset: {fd, fw, l/2}}); 
+	
+ CASE 4:
+  @api.v1.part.workCSys({ id: part, name: "o1", offset: {fd, fw, 0}}); 
+  @api.v1.part.workCSys({ id: part, name: "t1", offset: {fd, fw, l}});
+  @api.v1.part.workCSys({ id: part, name: "m1", offset: {0, 0, l/2}});  
+	
+ CASE 5:
+  @api.v1.part.workCSys({ id: part, name: "o1"}); 
+ ENDSWITCH 
+ENDPROC
+
+PROC genPart
+	PAR name, length;
+	VAR wg, box, box1;
+ 	//res = @api.v1.part.create({ name: params.name });
+	res = @api.v1.assembly.partTemplate({ name: name });
+	part = res.result;
+	sf= @api.v1.part.entityInjection({ id: part, name: "MyENEP"});
+	sf= sf.result;
+	shape = @api.v1.curve.shape({id: sf});
+	shape = shape.result;
+	FORALL  ENEP.pLines pline DO
+		res = @api.v1.curve.polyline2d({id: shape, points: pline.points, bulges: pline.bulges, close: pline.close});
+	NEXT
+	solid =  @api.v1.solid.extrusion({id: sf, curves: shape , direction: {0,0,length} });
+	@api.v1.curve.deleteShape({ ids: [shape] });
+	solid = solid.result;
+	coordsys(length);
+	
+	SWITCH name 
+ 		CASE "Sash_Bottom":
+ 			res = @api.v1.part.workPlane({ id: part, position: [ENEP.length,ENEP.width,0], normal: [0,-ENEP.height,ENEP.height] });
+ 			feature = @api.v1.part.slice({ id: part, targets: [{ id: sf }], reference: res.result });
+ 			res = @api.v1.part.workPlane({ id: part, position: [ENEP.length,ENEP.width,length], normal: [0,-ENEP.height,-ENEP.height] });
+ 			feature = @api.v1.part.slice({ id: part, targets: [{id: feature.result}], reference: res.result });
+ 			
+ 		CASE "Sash_Right":
+	 		res = @api.v1.part.workPlane({ id: part, position: [ENEP.length,ENEP.width,0], normal: [0,-ENEP.height,ENEP.height] });
+ 			feature = @api.v1.part.slice({ id: part, targets: [{ id: sf }], reference: res.result });
+ 			res = @api.v1.part.workPlane({ id: part, position: [ENEP.length,ENEP.width,length], normal: [0,-ENEP.height,-ENEP.height] });
+ 			feature = @api.v1.part.slice({ id: part, targets: [{id: feature.result}], reference: res.result });
+ 			res = @api.v1.part.workPlane({ id: part, position: [ENEP.length,ENEP.width,length-23], normal: [0,0,-1] });
+ 			feature = @api.v1.part.slice({ id: part, targets: [{id: feature.result}], reference: res.result });
+ 		CASE "Sash_Left":
+	 		res = @api.v1.part.workPlane({ id: part, position: [ENEP.length,ENEP.width,0], normal: [0,-ENEP.height,ENEP.height] });
+ 			feature = @api.v1.part.slice({ id: part, targets: [{ id: sf }], reference: res.result });
+ 			res = @api.v1.part.workPlane({ id: part, position: [ENEP.length,ENEP.width,length], normal: [0,-ENEP.height,-ENEP.height] });
+ 			feature = @api.v1.part.slice({ id: part, targets: [{id: feature.result}], reference: res.result });
+ 			res = @api.v1.part.workPlane({ id: part, position: [ENEP.length,ENEP.width,23], normal: [0,0,1] });
+ 			feature = @api.v1.part.slice({ id: part, targets: [{id: feature.result}], reference: res.result });
+ 	CASE "HingeSash":
+	 		@api.v1.part.workCSys({ id: part, name: "hm1", offset: {0, 0, length/2}});
+	 		res = @api.v1.part.workPlane({ id: part, position: [ENEP.length,ENEP.width,0], normal: [0,1,1] });
+ 			feature = @api.v1.part.slice({ id: part, targets: [{ id: sf }], reference: res.result });
+ 			res = @api.v1.part.workPlane({ id: part, position: [ENEP.length,ENEP.width,length], normal: [0,1,-1] });
+ 			feature = @api.v1.part.slice({ id: part, targets: [{id: feature.result}], reference: res.result });
+ 	CASE "Bead_H":
+	 		res = @api.v1.part.workPlane({ id: part, position: [0,0,65], normal: [0,0,1] });
+ 			feature = @api.v1.part.slice({ id: part, targets: [{ id: sf }], reference: res.result });
+ 			res = @api.v1.part.workPlane({ id: part, position: [0,0, length -65], normal: [0,0,-1] });
+ 			feature = @api.v1.part.slice({ id: part, targets: [{id: feature.result}], reference: res.result });
+ 	CASE "Bead_V":
+	 		res = @api.v1.part.workPlane({ id: part, position: [0,0,45], normal: [0,0,1] });
+ 			feature = @api.v1.part.slice({ id: part, targets: [{ id: sf }], reference: res.result });
+ 			res = @api.v1.part.workPlane({ id: part, position: [0,0, length -45], normal: [0,0,-1] });
+ 			feature = @api.v1.part.slice({ id: part, targets: [{id: feature.result}], reference: res.result });		
+	 ENDSWITCH;
+ENDPROC
+
+@api.v1.common.clear();
+width = params.width;
+height = params.height;
+str = "Window" + width + "_" + height;
+asm = @api.v1.assembly.create({name: str});
+asm = asm.result; 
+//asm = params.asm;
+
+element = {"name": 50, "height": 44, "width": 101.6, "hingeSash": "EP14345", "insetSash": "EL3836",    "bead": "EL6574"};
+
+typeWidth= element.width; // width = 101.6;
+typeHeight = element.height; //= 44; 
+
+
+ENEP = readType(element.insetSash);  
+genPart("Sash_Left", height);
+genPart("Sash_Right", height);
+genPart("Sash_Bottom",  width);
+
+ENEP = readType(element.hingeSash);
+genPart("HingeSash", width);
+
+ENEP = readType(element.bead);	
+genPart("Bead_V", height);
+genPart("Bead_H", width );
+
+
+res = @api.v1.common.save({ format: "ofb" });
+RETURN  res.result;
+]]>
+    </code>
+    <code name="createCapralWindowAssembly">
+      <memberInfo visible="0" />
+      <![CDATA[
+PAR params;
+VAR parts,part, transform, asm, res, fd, fw, csys, csys1,instance, name, i, definitions, str, kv;
+
+PROC genfastendContraint
+PAR prod, n, i1, c1, r, a;
+VAR p, p1;
+kv[i1]= prod;
+i1 = @api.v1.assembly.getInstance({ ownerId: asm, name: i1 });
+i1 = i1.result;	
+c1 = @api.v1.part.getWorkGeometry({ id: prod, name: c1 });
+c1 = c1.result;
+@api.v1.assembly.fastenedOrigin({ id: asm, name: n, mate1: { matePath: [i1], wcsId: c1,  flipType: r, reorientType: a}});
+
+ENDPROC
+PROC genContraint
+PAR prod, n, i1, c1, i2, c2, r, a;
+VAR p, p1;
+kv[i2]= prod;
+p = kv[i1];	
+i1 = @api.v1.assembly.getInstance({ ownerId: asm, name: i1 });
+i1 = i1.result;
+c1 = @api.v1.part.getWorkGeometry({ id: p, name: c1 });
+c1 = c1.result;
+p1 = kv[i2];	
+i2 =  @api.v1.assembly.getInstance({ ownerId: asm, name: i2 });
+i2 = i2.result;	
+c2 = @api.v1.part.getWorkGeometry({ id: p1, name: c2 });
+c2 = c2.result;
+@api.v1.assembly.fastened({ id: asm, name: n, mate1: { matePath: [i1], wcsId: c1 }, mate2: { matePath: [i2], wcsId: c2, flipType: r, reorientType: a}});
+
+ENDPROC
+
+
+
+asm = params.asm;
+kv = {};
+//db
+res = @api.v1.assembly.getPartTemplate({ name: "Sash_Bottom" });
+res = res.result;
+@api.v1.assembly.instance({ productId: res, ownerId: asm, name: "Sash_Bottom"});
+genfastendContraint(res, "FO_o1_y270", "Sash_Bottom", "o1", "Y", "270");
+
+res = @api.v1.assembly.getPartTemplate({ name: "Sash_Left" });
+res = res.result;
+@api.v1.assembly.instance({ productId: res, ownerId: asm, name: "Sash_Left"});
+genfastendContraint(res, "FO_t1_nz270", "Sash_Left", "t1", "-Z", "270");
+
+res = @api.v1.assembly.getPartTemplate({ name: "Sash_Right" });
+res = res.result;
+@api.v1.assembly.instance({ productId: res, ownerId: asm, name: "Sash_Right"});
+genContraint(res, "F_t1_o1_ny0", "Sash_Bottom", "t1", "Sash_Right", "o1", "-Y", "0");
+
+
+res = @api.v1.assembly.getPartTemplate({ name: "HingeSash" });
+res = res.result;
+@api.v1.assembly.instance({ productId: res, ownerId: asm, name: "HingeSash"});
+genContraint(res, "F_t1_o1_ny0", "Sash_Left", "o1", "HingeSash", "o1", "-Y", "0");
+
+
+res = @api.v1.assembly.getPartTemplate({ name: "Bead_H" });
+res = res.result;
+@api.v1.assembly.instance({ productId: res, ownerId: asm, name: "Bead_H"});
+genContraint(res, "F_m1_m1_z0", "Sash_Bottom", "m1", "Bead_H", "m1", "Z", "0");
+
+
+res = @api.v1.assembly.getPartTemplate({ name: "Bead_V" });
+res = res.result;
+@api.v1.assembly.instance({ productId: res, ownerId: asm, name: "Bead_V_l"});
+genContraint(res, "F_m1_m1_z0", "Sash_Left", "m1", "Bead_V_l", "m1", "Z", "0");
+
+@api.v1.assembly.instance({ productId: res, ownerId: asm, name: "Bead_V_r"});
+genContraint(res, "F_m1_m1_z0", "Sash_Right", "m1", "Bead_V_r", "m1", "Z", "0");
+RETURN;
+]]>
+    </code>
+  </members>
+</class>
+
