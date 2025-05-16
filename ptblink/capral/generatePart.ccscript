@@ -1,0 +1,163 @@
+PAR params;
+VAR family,fam, typeWidth, typeHeight, ASG50,element, key, result, part, asm, str,json, ENEP, sf, pline, solid,shape, res, height, height1, width, width1;
+
+PROC readType
+PAR param;
+VAR dataStr;
+dataStr = "https:/raw.githubusercontent.com/dm385/cad-files/refs/heads/main/ptblink/Capral/profiles/" + param + ".json";
+json = @api.v1.utils.parseJson({ url:  dataStr, format: "JSON"});
+//dataStr = "C:\\tmp\\allProfilesJSON\\" + param + ".json";
+//json = @api.v1.utils.parseJson({ file:  dataStr, format: "JSON"});
+RETURN json.result;
+ENDPROC
+
+PROC coordsys
+PAR l;
+VAR fw,fd, flip;
+fw = ENEP.width;	fd = ENEP.length;	flip = ENEP.csysType;
+SWITCH flip 
+ CASE 0:
+	@api.v1.part.workCSys({ id: part, name: "o1", offset: {0, 0, 0}});
+	@api.v1.part.workCSys({ id: part, name: "o2", offset: {fd, 0, 0}});
+	@api.v1.part.workCSys({ id: part, name: "o3", offset: {fd, -fw, 0}});
+	@api.v1.part.workCSys({ id: part, name: "o4", offset: {0, -fw,0}});
+	@api.v1.part.workCSys({ id: part, name: "m1", offset: {fd/2, -fw,l/2}});
+	@api.v1.part.workCSys({ id: part, name: "t1", offset: {0, 0, l}});
+	@api.v1.part.workCSys({ id: part, name: "t2", offset: {fd, 0, l}});
+	@api.v1.part.workCSys({ id: part, name: "t3", offset: {fd, -fw, l}});
+	@api.v1.part.workCSys({ id: part, name: "t4", offset: {0, -fw, l}});
+ CASE 1:
+	@api.v1.part.workCSys({ id: part, name: "o1", offset: {fd, 0, 0}, rotation: [0,0,C:PI]});
+	@api.v1.part.workCSys({ id: part, name: "o2", offset: {0, 0, 0}, rotation: [0,0,C:PI]});
+	@api.v1.part.workCSys({ id: part, name: "o3", offset: {0, fw, 0}, rotation: [0,0,C:PI]});
+	@api.v1.part.workCSys({ id: part, name: "o4", offset: {fd, fw,0}, rotation: [0,0,C:PI]});
+	@api.v1.part.workCSys({ id: part, name: "m1", offset: {fd/2, fw,l/2}, rotation: [0,0,C:PI]});
+	@api.v1.part.workCSys({ id: part, name: "t1", offset: {fd, 0, l}, rotation: [0,0,C:PI]});
+	@api.v1.part.workCSys({ id: part, name: "t2", offset: {0, 0, l}, rotation: [0,0,C:PI]});
+	@api.v1.part.workCSys({ id: part, name: "t3", offset: {0, fw, l}, rotation: [0,0,C:PI]});
+	@api.v1.part.workCSys({ id: part, name: "t4", offset: {fd, fw, l}, rotation: [0,0,C:PI]});
+ CASE 2:
+  @api.v1.part.workCSys({ id: part, name: "o1", offset: {0, fw, 0}});
+	@api.v1.part.workCSys({ id: part, name: "o2", offset: {fd, fw, 0}});
+	@api.v1.part.workCSys({ id: part, name: "o3", offset: {fd, 0, 0}});
+	@api.v1.part.workCSys({ id: part, name: "o4", offset: {0, 0,0}});
+	@api.v1.part.workCSys({ id: part, name: "m1", offset: {fd/2, 0,l/2}});
+	@api.v1.part.workCSys({ id: part, name: "t1", offset: {0, fw, l}});
+	@api.v1.part.workCSys({ id: part, name: "t2", offset: {fd, fw, l}});
+	@api.v1.part.workCSys({ id: part, name: "t3", offset: {fd, 0, l}});
+	@api.v1.part.workCSys({ id: part, name: "t4", offset: {0, 0, l}});
+ CASE 3:
+  @api.v1.part.workCSys({ id: part, name: "m1", offset: {fd, fw, l/2}}); 
+	
+ CASE 4:
+  @api.v1.part.workCSys({ id: part, name: "o1", offset: {fd, fw, 0}}); 
+  @api.v1.part.workCSys({ id: part, name: "t1", offset: {fd, fw, l}}); 
+  @api.v1.part.workCSys({ id: part, name: "m1", offset: {-47.13, -12.86, l/2}}); 
+	
+ ENDSWITCH 
+ENDPROC
+
+PROC genPart
+	PAR name, length;
+	VAR wg, box, box1;
+ 	//res = @api.v1.part.create({ name: params.name });
+	res = @api.v1.assembly.partTemplate({ name: name });
+	part = res.result;
+	sf= @api.v1.part.entityInjection({ id: part, name: "MyENEP"});
+	sf= sf.result;
+	shape = @api.v1.curve.shape({id: sf});
+	shape = shape.result;
+	FORALL  ENEP.pLines pline DO
+		res = @api.v1.curve.polyline2d({id: shape, points: pline.points, bulges: pline.bulges, close: pline.close});
+	NEXT
+	solid =  @api.v1.solid.extrusion({id: sf, curves: shape , direction: {0,0,length} });
+	@api.v1.curve.deleteShape({ ids: [shape] });
+	solid = solid.result;
+	coordsys(length);
+	
+	SWITCH name 
+ 		CASE "SashAdaptor_2":
+ 			box = @api.v1.part.box({id: part, lenght: 100, width: 100, height: typeHeight + 20});
+ 			res = @api.v1.part.box({id: part, lenght: 100, width: 100, height: typeHeight + 20});
+ 			res= res.result;
+ 			wg = @api.v1.part.getWorkGeometry({ id: part, name: "ZAxis" });
+ 			box1 = @api.v1.part.translation({id: part, targets: [ res], references: [ wg.result], distance: length - typeHeight -20});
+ 			@api.v1.part.boolean({ id: part, type: "SUBTRACTION",  target: {id: sf}, tools: [{ id: box.result }, {id: box1.result}]});
+ 		
+ 		CASE "SashAdaptor_3":
+	 		box = @api.v1.part.box({id: part, lenght: 100, width: 100, height:  20});
+	 		res = @api.v1.part.box({id: part, lenght: 100, width: 100, height:  typeHeight + 20});
+ 			res= res.result;
+ 			wg = @api.v1.part.getWorkGeometry({ id: part, name: "ZAxis" });
+ 			box1 = @api.v1.part.translation({id: part, targets: [{id: res}], references: [ wg.result], distance: length  - 20 - typeHeight});
+ 			@api.v1.part.boolean({ id: part, type: "SUBTRACTION",  target:  {id: sf}, tools: [{ id: box.result }, {id: box1.result}]});
+	 ENDSWITCH;
+ENDPROC
+
+@api.v1.common.clear();
+
+IF ISVOID(param) THEN
+    width = 1000;
+    width1 = 600;
+    height = 2000;
+    height1 = 1200;
+    fam = 300;
+ELSE
+    width = params.width;
+    width1 = params.width1;
+    height = params.height;
+    height1 = params.height1;
+    fam = params.family;
+ENDIF
+str = "Frame_" + width + "_" + width1 + "_" + height + "_" + height1;
+asm = @api.v1.assembly.create({name: str});
+asm = asm.result; 
+//asm = params.asm;
+
+SWITCH fam
+	CASE 300: element = {"name": 300, "height": 44, "width": 101.6, "frame": "EN5010", "subSill": "EP5693",
+									 "transom": "EN5021", "hinge": "EP5132", "sashAdaptor": "EU9835",    "bead": "EN5032"
+							};
+	CASE 425: element = {"name": 425, "height": 50, "width": 101.6, "frame": "EP7662", "subSill": "EP5693",
+								 "transom": "EP7663", "hinge": "EP5132", "sashAdaptor": "EP8094","bead": "EN5032"
+							};
+ENDSWITCH
+
+typeWidth= element.width; // width = 101.6;
+typeHeight = element.height; //= 44; 
+
+
+ENEP = readType(element.frame);  //frame EN5010, EP7662
+genPart("NL_Frame_0", width1 - 2 * typeHeight);
+genPart("NL_Frame_1", width - width1 - typeHeight);
+genPart("NL_Frame_2", height1);
+genPart("NL_Frame_3", height - height1);
+
+ENEP = readType(element.subSill);
+genPart("SubSill", width);
+
+ENEP = readType(element.sashAdaptor);	
+genPart("SashAdaptor_0", width1 - 2 * typeHeight);
+genPart("SashAdaptor_1", width - width1 - typeHeight);
+genPart("SashAdaptor_2", height1);
+genPart("SashAdaptor_3", height - height1);
+
+ENEP = readType(element.transom);	//"EN5021"
+genPart("Transom_0", width1 - 2 * typeHeight);
+genPart("Transom_1", width - width1 - typeHeight);
+genPart("Transom_2", height1);
+genPart("Transom_3", height - height1);
+
+ENEP = readType(element.bead);	
+genPart("Bead_0", width1 - 2 * typeHeight);
+genPart("Bead_1", width - width1 - typeHeight);
+genPart("Bead_2", height1);
+genPart("Bead_3", height - height1);
+
+ENEP = readType(element.hinge);	
+genPart("Hinge_0", width1 - 2 * typeHeight);
+genPart("Hinge_1", width - width1 - typeHeight);
+
+
+res = @api.v1.common.save({ file: "C:/tmp/capral.ofb",  format: "ofb" });
+RETURN  res.result;
