@@ -1,0 +1,218 @@
+{
+  "constraints": [],
+  "ident": "neutralXML",
+  "instances": [
+    {
+      "ident": "PCB",
+      "template": "printedCircuitBoard_PCB",
+      "transform": "[[1,0,0,-45.900000], [0,1,0,-50.000000], [0,0,1,-1.950000], [0,0,0,1]]",
+      "userData": {
+        "material": "{\"name\":\"PCB Material\",\"density\":\"1973.00000000\",\"specific_heat\":\"655.95794678\",\"surfaceEmissivity\":\"0.90000000\",\"thermalConductivity\":{\"orthotropic\":{\"x\":\"38.77000046\",\"y\":\"38.77000046\",\"z\":\"0.33330452\"}}}"
+      }
+    },
+    {
+      "ident": "PBGAAFC_40x40mm",
+      "template": "PBGAAFC_40x40mm",
+      "transform": "[[1,0,0,0], [0,1,0,0], [0,0,1,0], [0,0,0,1]]"
+    },
+    {
+      "ident": "WindTunnel",
+      "template": "WindTunnel",
+      "transform": "[[1,0,0,0], [0,1,0,0], [0,0,1,0], [0,0,0,1]]"
+    }
+  ],
+  "templates": [
+    {
+      "geometry": [
+        {
+          "height": 1.6,
+          "ident": "Box",
+          "length": 100,
+          "type": "CC_Box",
+          "width": 100
+        }
+      ],
+      "ident": "printedCircuitBoard_PCB",
+      "type": "part"
+    },
+    {
+      "assembly": {
+        "constraints": [],
+        "ident": "PBGAAFC_40x40mm",
+        "instances": [
+          {
+            "ident": "2R CTM",
+            "template": "twoResistorModel_2R CTM",
+            "transform": "[[1,0,0,-15.900000], [0,1,0,-20.000000], [0,0,1,3.550000], [0,0,0,1]]"
+          }
+        ],
+        "templates": [
+          {
+            "geometry": [
+              {
+                "height": 3.9,
+                "ident": "Box",
+                "length": 40,
+                "type": "CC_Box",
+                "width": 40
+              }
+            ],
+            "ident": "twoResistorModel_2R CTM",
+            "type": "part"
+          }
+        ]
+      },
+      "ident": "PBGAAFC_40x40mm",
+      "type": "assembly"
+    },
+    {
+      "assembly": {
+        "constraints": [],
+        "ident": "WindTunnel",
+        "instances": [
+          {
+            "ident": "4Sides",
+            "template": "4Sides",
+            "transform": "[[1,0,0,0], [0,1,0,0], [0,0,1,0], [0,0,0,1]]"
+          },
+          {
+            "ident": "InletFlow",
+            "template": "rectangular2dFan_InletFlow",
+            "transform": "[[1,0,0,-70.900010], [0,1,0,131.000000], [0,0,1,-7.900000], [0,0,0,1]]"
+          },
+          {
+            "ident": "Outlet",
+            "template": "grille_Outlet",
+            "transform": "[[1,0,0,-70.900000], [0,1,0,-149.000000], [0,0,1,-7.900000], [0,0,0,1]]"
+          }
+        ],
+        "templates": [
+          {
+            "assembly": {
+              "constraints": [],
+              "ident": "4Sides",
+              "instances": [
+                {
+                  "ident": "LowXSide",
+                  "template": "solid2dBlock_LowXSide",
+                  "transform": "[[1,0,0,-70.900000], [0,1,0,-149.000000], [0,0,1,-7.900000], [0,0,0,1]]",
+                  "userData": {
+                    "material": "{\"name\":\"Walls\",\"density\":\"1200.00000000\",\"specific_heat\":\"1500.00000000\",\"surfaceEmissivity\":\"0.95000000\",\"thermalConductivity\":{\"isotropic\":{\"conductivity\":\"0.89999998\"}}}"
+                  }
+                },
+                {
+                  "ident": "HighXSide",
+                  "template": "solid2dBlock_HighXSide",
+                  "transform": "[[1,0,0,79.100000], [0,1,0,-149.000000], [0,0,1,-7.900000], [0,0,0,1]]",
+                  "userData": {
+                    "material": "{\"name\":\"Walls\",\"density\":\"1200.00000000\",\"specific_heat\":\"1500.00000000\",\"surfaceEmissivity\":\"0.95000000\",\"thermalConductivity\":{\"isotropic\":{\"conductivity\":\"0.89999998\"}}}"
+                  }
+                },
+                {
+                  "ident": "LowZSide",
+                  "template": "solid2dBlock_LowZSide",
+                  "transform": "[[1,0,0,-70.900000], [0,1,0,-149.000000], [0,0,1,-7.900000], [0,0,0,1]]",
+                  "userData": {
+                    "material": "{\"name\":\"Walls\",\"density\":\"1200.00000000\",\"specific_heat\":\"1500.00000000\",\"surfaceEmissivity\":\"0.95000000\",\"thermalConductivity\":{\"isotropic\":{\"conductivity\":\"0.89999998\"}}}"
+                  }
+                },
+                {
+                  "ident": "HighZSide",
+                  "template": "solid2dBlock_HighZSide",
+                  "transform": "[[1,0,0,-70.900000], [0,1,0,-149.000000], [0,0,1,22.100000], [0,0,0,1]]",
+                  "userData": {
+                    "material": "{\"name\":\"Walls\",\"density\":\"1200.00000000\",\"specific_heat\":\"1500.00000000\",\"surfaceEmissivity\":\"0.95000000\",\"thermalConductivity\":{\"isotropic\":{\"conductivity\":\"0.89999998\"}}}"
+                  }
+                }
+              ],
+              "templates": [
+                {
+                  "geometry": [
+                    {
+                      "height": 30,
+                      "ident": "Box",
+                      "length": 1,
+                      "type": "CC_Box",
+                      "width": 280
+                    }
+                  ],
+                  "ident": "solid2dBlock_LowXSide",
+                  "type": "part"
+                },
+                {
+                  "geometry": [
+                    {
+                      "height": 30,
+                      "ident": "Box",
+                      "length": 1,
+                      "type": "CC_Box",
+                      "width": 280
+                    }
+                  ],
+                  "ident": "solid2dBlock_HighXSide",
+                  "type": "part"
+                },
+                {
+                  "geometry": [
+                    {
+                      "height": 1,
+                      "ident": "Box",
+                      "length": 150,
+                      "type": "CC_Box",
+                      "width": 280
+                    }
+                  ],
+                  "ident": "solid2dBlock_LowZSide",
+                  "type": "part"
+                },
+                {
+                  "geometry": [
+                    {
+                      "height": 1,
+                      "ident": "Box",
+                      "length": 150,
+                      "type": "CC_Box",
+                      "width": 280
+                    }
+                  ],
+                  "ident": "solid2dBlock_HighZSide",
+                  "type": "part"
+                }
+              ]
+            },
+            "ident": "4Sides",
+            "type": "assembly"
+          },
+          {
+            "geometry": [
+              {
+                "height": 30,
+                "ident": "Box",
+                "length": 150.00001,
+                "type": "CC_Box",
+                "width": 0.1
+              }
+            ],
+            "ident": "rectangular2dFan_InletFlow",
+            "type": "part"
+          },
+          {
+            "geometry": [
+              {
+                "height": 30,
+                "ident": "Box",
+                "length": 150,
+                "type": "CC_Box",
+                "width": 2
+              }
+            ],
+            "ident": "grille_Outlet",
+            "type": "part"
+          }
+        ]
+      },
+      "ident": "WindTunnel",
+      "type": "assembly"
+    }
+  ]
+}
