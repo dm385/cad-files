@@ -1,0 +1,337 @@
+{
+  "ident": "As1Asm",
+  "instances": [
+    {
+      "ident": "Plate",
+      "template": "Plate",
+      "userData": {
+        "material": "steel",
+        "dimension": "{ height: 100, width: 150, length: 250 }"
+      }
+    },
+    {
+      "ident": "LBracketAsm",
+      "template": "LBracketAsm"
+    },
+    {
+      "ident": "LBracketAsm0",
+      "template": "LBracketAsm"
+    },
+    {
+      "ident": "RodAsm",
+      "template": "RodAsm"
+    }
+  ],
+  "templates": [
+    {
+      "ident": "Plate",
+      "type": "part",
+      "reference": {
+        "location": "https://raw.githubusercontent.com/dm385/cad-files/main/json-assembly/Plate.ofb",
+        "type": "ofb"
+      },
+      "userData": {
+        "material": "wood",
+        "dimension": "{ height: 5, width: 5, length: 5 }"
+      }
+    },
+    {
+      "ident": "LBracketAsm",
+      "type": "assembly",
+      "assembly": {
+        "ident": "LBracketAsm",
+        "instances": [
+          {
+            "ident": "LBracket",
+            "template": "LBracket"
+          },
+          {
+            "ident": "NutBoltAsm",
+            "template": "NutBoltAsm"
+          },
+          {
+            "ident": "NutBoltAsm0",
+            "template": "NutBoltAsm"
+          },
+          {
+            "ident": "NutBoltAsm1",
+            "template": "NutBoltAsm"
+          }
+        ],
+        "templates": [
+          {
+            "ident": "LBracket",
+            "type": "part",
+            "reference": {
+              "location": "https://raw.githubusercontent.com/dm385/cad-files/main/json-assembly/LBracket.ofb",
+              "type": "ofb"
+            }
+          },
+          {
+            "ident": "NutBoltAsm",
+            "type": "assembly",
+            "assembly": {
+              "ident": "NutBoltAsm",
+              "instances": [
+                {
+                  "ident": "Bolt",
+                  "template": "Bolt"
+                },
+                {
+                  "ident": "Nut",
+                  "template": "Nut"
+                }
+              ],
+              "templates": [
+                {
+                  "ident": "Bolt",
+                  "type": "part",
+                  "reference": {
+                    "location": "https://raw.githubusercontent.com/dm385/cad-files/main/json-assembly/Bolt.ofb",
+                    "type": "ofb"
+                  }
+                },
+                {
+                  "ident": "Nut",
+                  "type": "part",
+                  "reference": {
+                    "location": "https://raw.githubusercontent.com/dm385/cad-files/main/json-assembly/Nut.ofb",
+                    "type": "ofb"
+                  }
+                }
+              ],
+              "constraints": [
+                {
+                  "type": "CC_FastenedOriginConstraint",
+                  "zOffset": 100,
+                  "mate1": {
+                    "path": ["/Bolt"],
+                    "csys": "WCS_Origin",
+                    "flip": "Z",
+                    "reorient": "0"
+                  }
+                },
+                {
+                  "type": "CC_FastenedConstraint",
+                  "mate1": {
+                    "path": ["/Bolt"],
+                    "csys": "WCS_Nut",
+                    "flip": "Z",
+                    "reorient": "0"
+                  },
+                  "mate2": {
+                    "path": ["/Nut"],
+                    "csys": "WCS_Hole-Top",
+                    "flip": "Z",
+                    "reorient": "0"
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "constraints": [
+          {
+            "type": "CC_FastenedOriginConstraint",
+            "mate1": {
+              "path": ["/LBracket"],
+              "csys": "WCS_Origin",
+              "flip": "Z",
+              "reorient": "0"
+            }
+          },
+          {
+            "type": "CC_FastenedConstraint",
+            "mate1": {
+              "path": ["/LBracket"],
+              "csys": "WCS_Hole2-Top",
+              "flip": "Z",
+              "reorient": "0"
+            },
+            "mate2": {
+              "path": ["/NutBoltAsm/Bolt", "/NutBoltAsm"],
+              "csys": "WCS_Head-Shaft",
+              "flip": "Z",
+              "reorient": "0"
+            }
+          },
+          {
+            "type": "CC_FastenedConstraint",
+            "mate1": {
+              "path": ["/LBracket"],
+              "csys": "WCS_Hole1-Top",
+              "flip": "Z",
+              "reorient": "0"
+            },
+            "mate2": {
+              "path": ["/NutBoltAsm/Bolt", "/NutBoltAsm0"],
+              "csys": "WCS_Head-Shaft",
+              "flip": "Z",
+              "reorient": "0"
+            }
+          },
+          {
+            "type": "CC_FastenedConstraint",
+            "mate1": {
+              "path": ["/LBracket"],
+              "csys": "WCS_Hole3-Top",
+              "flip": "Z",
+              "reorient": "0"
+            },
+            "mate2": {
+              "path": ["/NutBoltAsm/Bolt", "/NutBoltAsm1"],
+              "csys": "WCS_Head-Shaft",
+              "flip": "Z",
+              "reorient": "0"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "ident": "RodAsm",
+      "type": "assembly",
+      "assembly": {
+        "ident": "RodAsm",
+        "instances": [
+          {
+            "ident": "Rod",
+            "template": "Rod"
+          },
+          {
+            "ident": "Nut",
+            "template": "Nut0"
+          },
+          {
+            "ident": "Nut0",
+            "template": "Nut0"
+          }
+        ],
+        "templates": [
+          {
+            "ident": "Rod",
+            "type": "part",
+            "reference": {
+              "location": "https://raw.githubusercontent.com/dm385/cad-files/main/json-assembly/Rod.ofb",
+              "type": "ofb"
+            }
+          },
+          {
+            "ident": "Nut0",
+            "type": "part",
+            "reference": {
+              "location": "https://raw.githubusercontent.com/dm385/cad-files/main/json-assembly/Nut.ofb",
+              "type": "ofb"
+            }
+          }
+        ],
+        "constraints": [
+          {
+            "type": "CC_FastenedOriginConstraint",
+            "mate1": {
+              "path": ["/Rod"],
+              "csys": "WCS_Origin",
+              "flip": "Z",
+              "reorient": "0"
+            }
+          },
+          {
+            "type": "CC_FastenedConstraint",
+            "mate1": {
+              "path": ["/Rod"],
+              "csys": "WCS_Nut-Left",
+              "flip": "Z",
+              "reorient": "0"
+            },
+            "mate2": {
+              "path": ["/Nut"],
+              "csys": "WCS_Hole-Top",
+              "flip": "Z",
+              "reorient": "0"
+            }
+          },
+          {
+            "type": "CC_FastenedConstraint",
+            "mate1": {
+              "path": ["/Rod"],
+              "csys": "WCS_Nut-Right",
+              "flip": "Z",
+              "reorient": "0"
+            },
+            "mate2": {
+              "path": ["/Nut0"],
+              "csys": "WCS_Hole-Top",
+              "flip": "Z",
+              "reorient": "0"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "constraints": [
+    {
+      "type": "CC_FastenedOriginConstraint",
+      "mate1": {
+        "path": ["/Plate"],
+        "csys": "WCS_Origin",
+        "flip": "Z",
+        "reorient": "0"
+      },
+      "userData": {
+        "name": "something",
+        "object": "{ t: 50 }"
+      }
+    },
+    {
+      "type": "CC_FastenedConstraint",
+      "mate1": {
+        "path": ["/Plate"],
+        "csys": "WCS_Hole2_Top",
+        "flip": "Z",
+        "reorient": "0"
+      },
+      "mate2": {
+        "path": ["/LBracketAsm/LBracket", "/LBracketAsm"],
+        "csys": "WCS_Hole1-Bottom",
+        "flip": "Z",
+        "reorient": "0"
+      }
+    },
+    {
+      "type": "CC_FastenedConstraint",
+      "zOffset": 100,
+      "mate1": {
+        "path": ["/Plate"],
+        "csys": "WCS_Hole5_Top",
+        "flip": "Z",
+        "reorient": "0"
+      },
+      "mate2": {
+        "path": ["/LBracketAsm/LBracket", "/LBracketAsm0"],
+        "csys": "WCS_Hole1-Bottom",
+        "flip": "Z",
+        "reorient": "0"
+      }
+    },
+    {
+      "type": "CC_FastenedConstraint",
+      "mate1": {
+        "path": ["/LBracketAsm/LBracket", "/LBracketAsm"],
+        "csys": "WCS_Rod",
+        "flip": "Z",
+        "reorient": "0"
+      },
+      "mate2": {
+        "path": ["/RodAsm/Rod", "/RodAsm"],
+        "csys": "WCS_Nut-Left",
+        "flip": "Z",
+        "reorient": "0"
+      }
+    }
+  ],
+  "userData": {
+    "name": "RootAssembly",
+    "type": "{ inner: 5, outer: 5 }"
+  }
+}
